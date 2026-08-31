@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Onboarding Survey — Manager</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pink: #FF0083; --pink-light: #fff0f7; --charcoal: #1a1a1a;
+    --mid: #555; --light: #999; --border: #e8e8e8;
+    --bg: #fafafa; --white: #fff; --radius: 12px; --radius-sm: 8px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--charcoal); min-height: 100vh; }
+
+  .survey-header { background: var(--charcoal); padding: 16px 0; position: sticky; top: 0; z-index: 100; }
+  .header-inner { max-width: 680px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; gap: 20px; }
+  .wordmark { font-family: 'Fraunces', serif; font-size: 17px; font-weight: 400; color: white; letter-spacing: -0.02em; white-space: nowrap; }
+  .wordmark span { color: var(--pink); }
+  .header-badge { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.1em; color: rgba(255,255,255,0.4); border: 1px solid rgba(255,255,255,0.15); padding: 4px 10px; border-radius: 20px; white-space: nowrap; }
+  .progress-area { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+  .progress-meta { display: flex; justify-content: space-between; }
+  .progress-section-name { font-size: 11px; color: rgba(255,255,255,0.6); font-weight: 500; }
+  .progress-counter { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: rgba(255,255,255,0.3); }
+  .progress-bar { height: 3px; background: rgba(255,255,255,0.15); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--pink); border-radius: 2px; transition: width 0.35s ease; }
+
+  .survey-wrap { max-width: 680px; margin: 0 auto; padding: 0 24px 120px; }
+  .survey-section { padding-top: 52px; }
+  .section-intro { margin-bottom: 28px; }
+  .section-tag { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.12em; color: var(--pink); text-transform: uppercase; margin-bottom: 8px; }
+  .section-title { font-family: 'Fraunces', serif; font-size: 26px; font-weight: 300; line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 8px; }
+  .section-subtitle { font-size: 14px; color: var(--mid); line-height: 1.6; }
+  .section-divider { display: flex; align-items: center; gap: 16px; margin: 52px 0 0; }
+  .divider-line { flex: 1; height: 1px; background: var(--border); }
+  .divider-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.15em; color: var(--light); text-transform: uppercase; white-space: nowrap; }
+
+  .question { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 12px; transition: border-color 0.2s; cursor: pointer; }
+  .question.focused { border-color: var(--pink); box-shadow: 0 0 0 3px rgba(255,0,131,0.06); }
+  .question.key { border-color: var(--pink); background: var(--pink-light); }
+  .q-text { font-size: 15px; font-weight: 500; color: var(--charcoal); line-height: 1.5; margin-bottom: 6px; }
+  .q-hint { font-size: 12px; color: var(--light); margin-bottom: 16px; line-height: 1.5; }
+  .key-badge { display: inline-flex; align-items: center; gap: 5px; background: var(--pink); color: white; font-size: 10px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.06em; text-transform: uppercase; padding: 4px 10px; border-radius: 20px; margin-bottom: 12px; }
+
+  .input-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .choice-btn { border: 1.5px solid var(--border); background: var(--white); border-radius: var(--radius-sm); padding: 9px 16px; font-size: 13px; font-family: 'Inter', sans-serif; color: var(--charcoal); cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+  .choice-btn:hover { border-color: var(--pink); color: var(--pink); }
+  .choice-btn.selected { border-color: var(--pink); background: var(--pink-light); color: var(--pink); font-weight: 500; }
+
+  .time-picker { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+  .time-unit-toggle { display: flex; border: 1.5px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
+  .time-unit-btn { padding: 7px 13px; font-size: 12px; font-family: 'Inter', sans-serif; background: var(--white); border: none; cursor: pointer; color: var(--mid); transition: all 0.15s; }
+  .time-unit-btn.active { background: var(--pink); color: white; font-weight: 500; }
+  .time-number { width: 70px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 9px 12px; font-size: 15px; font-family: 'JetBrains Mono', monospace; color: var(--charcoal); text-align: center; outline: none; transition: border-color 0.15s; background: var(--white); }
+  .time-number:focus { border-color: var(--pink); }
+  .time-label { font-size: 13px; color: var(--mid); }
+  .not-yet-wrap { margin-top: 10px; }
+  .not-yet-btn { font-size: 12px; color: var(--light); background: none; border: 1.5px dashed var(--border); border-radius: var(--radius-sm); padding: 7px 13px; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.15s; }
+  .not-yet-btn:hover { border-color: var(--pink); color: var(--pink); }
+
+  .text-input { width: 100%; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 12px 16px; font-size: 14px; font-family: 'Inter', sans-serif; color: var(--charcoal); resize: vertical; min-height: 72px; outline: none; transition: border-color 0.15s; background: var(--white); }
+  .text-input:focus { border-color: var(--pink); }
+
+  .checkbox-list { display: flex; flex-direction: column; gap: 8px; }
+  .checkbox-item { display: flex; align-items: center; gap: 12px; padding: 11px 16px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.15s; background: var(--white); }
+  .checkbox-item:hover { border-color: #ccc; }
+  .checkbox-item.checked { border-color: var(--pink); background: var(--pink-light); }
+  .checkbox-box { width: 18px; height: 18px; border: 2px solid var(--border); border-radius: 4px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+  .checkbox-item.checked .checkbox-box { border-color: var(--pink); background: var(--pink); }
+  .checkbox-check { color: white; font-size: 11px; display: none; }
+  .checkbox-item.checked .checkbox-check { display: block; }
+  .checkbox-label { font-size: 14px; color: var(--charcoal); }
+
+  /* Person cards */
+  .person-cards { display: flex; flex-direction: column; gap: 14px; }
+  .person-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .person-card-header { background: var(--bg); border-bottom: 1px solid var(--border); padding: 14px 20px; display: flex; align-items: center; gap: 12px; }
+  .person-avatar { width: 30px; height: 30px; background: var(--charcoal); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: white; font-family: 'JetBrains Mono', monospace; flex-shrink: 0; }
+  .person-label { font-size: 13px; font-weight: 500; color: var(--charcoal); }
+  .person-card-body { padding: 20px; display: flex; flex-direction: column; gap: 20px; }
+  .person-q-label { font-size: 13px; font-weight: 500; color: var(--charcoal); margin-bottom: 4px; }
+  .person-q-hint { font-size: 12px; color: var(--light); margin-bottom: 10px; line-height: 1.5; }
+  .key-block { background: var(--pink-light); border-left: 3px solid var(--pink); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; padding: 16px; }
+
+  .delete-card-btn { margin-left: auto; background: none; border: none; cursor: pointer; font-size: 18px; color: var(--light); line-height: 1; padding: 0 4px; transition: color 0.15s; }
+  .delete-card-btn:hover { color: #e00; }
+  .add-person-btn { width: 100%; border: 2px dashed var(--border); border-radius: var(--radius); padding: 18px; background: none; cursor: pointer; font-size: 13px; color: var(--light); font-family: 'Inter', sans-serif; transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 12px; }
+  .add-person-btn:hover { border-color: var(--pink); color: var(--pink); }
+
+  .cost-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .cost-item label { font-size: 12px; color: var(--mid); display: block; margin-bottom: 6px; }
+  .cost-select { width: 100%; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; font-size: 13px; font-family: 'Inter', sans-serif; color: var(--charcoal); background: var(--white); outline: none; cursor: pointer; }
+
+  .info-note { background: var(--pink-light); border-left: 3px solid var(--pink); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; padding: 12px 16px; font-size: 13px; color: var(--mid); margin-bottom: 16px; line-height: 1.5; }
+
+  .submit-wrap { margin-top: 40px; display: flex; justify-content: flex-end; }
+  .btn-submit { background: var(--pink); color: white; border: none; border-radius: var(--radius-sm); padding: 14px 32px; font-size: 15px; font-weight: 500; font-family: 'Inter', sans-serif; cursor: pointer; transition: opacity 0.15s; }
+  .btn-submit:hover { opacity: 0.88; }
+</style>
+</head>
+<body>
+
+<header class="survey-header">
+  <div class="header-inner">
+    <div class="wordmark">L&D <span>×</span> Onboarding</div>
+    <div class="progress-area">
+      <div class="progress-meta">
+        <span class="progress-section-name" id="progressName">Per hire</span>
+        <span class="progress-counter" id="progressCounter">Section 1 / 3</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    </div>
+    <div class="header-badge">Manager</div>
+  </div>
+</header>
+
+<div class="survey-wrap">
+
+  <!-- INTRO -->
+  <div style="padding-top:40px;">
+    <div style="background:var(--charcoal);border-radius:var(--radius);padding:32px;color:white;">
+      
+      <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:var(--pink);text-transform:uppercase;margin-bottom:14px;">Liran Shaked · L&amp;D Lead Tech Dev</div>
+      <div id="personal-greeting" style="font-family:'Fraunces',serif;font-size:22px;font-weight:300;line-height:1.3;letter-spacing:-0.02em;margin-bottom:16px;">I joined Lemonade a few months ago to lead L&D — and onboarding is the first thing I'm working on.</div>
+      <div id="manager-card" style="display:none;background:rgba(255,255,255,0.08);border-radius:8px;padding:14px 18px;margin-bottom:16px;font-size:13px;color:rgba(255,255,255,0.9);line-height:1.8;">
+        <div id="manager-name" style="font-weight:600;font-size:15px;margin-bottom:2px;"></div>
+        <div id="manager-role" style="color:rgba(255,255,255,0.5);font-size:12px;margin-bottom:10px;"></div>
+        <div id="manager-reports" style="color:rgba(255,255,255,0.75);font-size:12px;line-height:1.9;border-top:1px solid rgba(255,255,255,0.1);padding-top:10px;"></div>
+      </div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.6);line-height:1.7;">I've started collecting feedback through conversations across R&D and Product — and before updating or changing anything in onboarding, I'd love to hear directly from you.<br><br>About <strong style="color:white;">5 minutes</strong>. <strong style="color:white;">No individual answers are shared</strong> — results go back to everyone as aggregate findings.</div>
+    </div>
+  </div>
+
+  <div class="section-divider"><div class="divider-line"></div><div class="divider-label">Section B</div><div class="divider-line"></div></div>
+
+  <!-- B: PER HIRE -->
+  <div class="survey-section" id="section-b" data-name="Per hire">
+    <div class="section-intro">
+      <div class="section-tag">Section B · Per hire</div>
+      <div class="section-title">For each person you onboarded</div>
+      <div class="section-subtitle">One card per hire from the last 6 months. "Not yet" is a valid answer — it means the ramp isn't finished.</div>
+    </div>
+
+    <div class="info-note">This is ramp data that's never been collected before. Your estimates don't need to be precise — just honest.</div>
+
+    <div class="person-cards" id="person-cards">
+      <!-- Card 1 -->
+      <div class="person-card">
+        <div class="person-card-header">
+          <div class="person-avatar">1</div>
+          <div class="person-label">Hire #1</div>
+          <button class="delete-card-btn" title="Remove" style="display:none;">×</button>
+        </div>
+        <div class="person-card-body">
+          <div>
+            <div class="person-q-label">When did they join?</div>
+            <div class="input-row">
+              <button class="choice-btn">Jan–Feb 2026</button>
+              <button class="choice-btn">Mar–Apr 2026</button>
+              <button class="choice-btn">May–Jun 2026</button>
+            </div>
+          </div>
+          <div>
+            <div class="person-q-label">How long until they were working independently on standard tasks?</div>
+            <div class="time-picker">
+              <div class="time-unit-toggle"><button class="time-unit-btn active" data-unit="weeks">Weeks</button><button class="time-unit-btn" data-unit="months">Months</button></div>
+              <input type="number" class="time-number" placeholder="8" min="1">
+              <span class="time-label">weeks</span>
+            </div>
+            <div class="not-yet-wrap"><button class="not-yet-btn">Not yet</button></div>
+          </div>
+          <div class="key-block">
+            <div class="key-badge">★ Most important</div>
+            <div class="person-q-label">How long until you stopped reviewing their work more carefully than you would a peer's?</div>
+            <div class="person-q-hint">Your honest read. This is the manager-side ramp number.</div>
+            <div class="time-picker">
+              <div class="time-unit-toggle"><button class="time-unit-btn active" data-unit="weeks">Weeks</button><button class="time-unit-btn" data-unit="months">Months</button></div>
+              <input type="number" class="time-number" placeholder="14" min="1">
+              <span class="time-label">weeks</span>
+            </div>
+            <div class="not-yet-wrap"><button class="not-yet-btn">Not yet</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button class="add-person-btn" id="add-person-btn">+ Add another hire</button>
+  </div>
+
+  <div class="section-divider"><div class="divider-line"></div><div class="divider-label">Section C</div><div class="divider-line"></div></div>
+
+  <!-- C: COST & GAPS -->
+  <div class="survey-section" id="section-c" data-name="Cost & gaps">
+    <div class="section-intro">
+      <div class="section-tag">Section C · Cost & gaps</div>
+      <div class="section-title">What it actually cost you</div>
+      <div class="section-subtitle">How much of your own time went into onboarding — and across the full ramp, not just week one.</div>
+    </div>
+
+    <div class="question">
+      <div class="q-text">How many of your own hours went into onboarding the last person you hired?</div>
+      <div class="q-hint">Rough estimates are fine.</div>
+      <div class="cost-grid" style="margin-top:8px;">
+        <div class="cost-item"><label>Week 1</label><select class="cost-select"><option>Less than 2h</option><option>2–5h</option><option>5–10h</option><option>10h+</option></select></div>
+        <div class="cost-item"><label>Month 1 total</label><select class="cost-select"><option>Less than 5h</option><option>5–10h</option><option>10–20h</option><option>20h+</option></select></div>
+        <div class="cost-item"><label>Months 2–3</label><select class="cost-select"><option>Less than 5h</option><option>5–10h</option><option>10–20h</option><option>20h+</option></select></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-divider"><div class="divider-line"></div><div class="divider-label">Section D</div><div class="divider-line"></div></div>
+
+  <!-- D: GAPS -->
+  <div class="survey-section" id="section-d" data-name="Gaps">
+    <div class="section-intro">
+      <div class="section-tag">Section D · Gaps</div>
+      <div class="section-title">What you built yourself</div>
+      <div class="section-subtitle">These questions write the roadmap.</div>
+    </div>
+
+    <div class="question">
+      <div class="q-text">How would you describe their onboarding status after 3 months?</div>
+      <div class="q-hint">Pick the closest fit for the last person you onboarded.</div>
+      <div class="input-row">
+        <button class="choice-btn">Fully ramped up</button>
+        <button class="choice-btn">Working independently</button>
+        <button class="choice-btn">Still needs some guidance</button>
+        <button class="choice-btn">Still needs significant support</button>
+      </div>
+    </div>
+
+    <div class="question">
+      <div class="q-text">Where did most of their learning come from?</div>
+      <div class="q-hint">Rough estimate — adds up to 100%.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:8px;">
+        <div><label style="font-size:12px;color:var(--mid);display:block;margin-bottom:6px;">Self-learning</label><div style="display:flex;align-items:center;gap:8px;"><input type="number" class="time-number" placeholder="40" min="0" max="100" style="width:64px;"><span style="font-size:13px;color:var(--mid);">%</span></div></div>
+        <div><label style="font-size:12px;color:var(--mid);display:block;margin-bottom:6px;">From peers</label><div style="display:flex;align-items:center;gap:8px;"><input type="number" class="time-number" placeholder="35" min="0" max="100" style="width:64px;"><span style="font-size:13px;color:var(--mid);">%</span></div></div>
+        <div><label style="font-size:12px;color:var(--mid);display:block;margin-bottom:6px;">From you (manager)</label><div style="display:flex;align-items:center;gap:8px;"><input type="number" class="time-number" placeholder="25" min="0" max="100" style="width:64px;"><span style="font-size:13px;color:var(--mid);">%</span></div></div>
+      </div>
+    </div>
+
+    <div class="question key">
+      <div class="key-badge">★ Most important</div>
+      <div class="q-text">What did you put together yourself every time someone new joined?</div>
+      <div class="q-hint">A doc, a checklist, a Notion page, a plan — anything you created because it didn't exist.</div>
+      <div class="checkbox-list">
+        <div class="checkbox-item"><div class="checkbox-box"><span class="checkbox-check">✓</span></div><div class="checkbox-label">30-60-90 day plan</div></div>
+        <div class="checkbox-item"><div class="checkbox-box"><span class="checkbox-check">✓</span></div><div class="checkbox-label">Domain knowledge doc or guide</div></div>
+        <div class="checkbox-item"><div class="checkbox-box"><span class="checkbox-check">✓</span></div><div class="checkbox-label">Starter task list or first-week plan</div></div>
+        <div class="checkbox-item"><div class="checkbox-box"><span class="checkbox-check">✓</span></div><div class="checkbox-label">Success criteria or expectations doc</div></div>
+        <div class="checkbox-item"><div class="checkbox-box"><span class="checkbox-check">✓</span></div><div class="checkbox-label">Buddy or mentor assignment</div></div>
+        <div class="checkbox-item"><div class="checkbox-box"><span class="checkbox-check">✓</span></div><div class="checkbox-label">I relied on what was already there</div></div>
+      </div>
+      <div style="margin-top:12px;"><textarea class="text-input" style="min-height:60px;" placeholder="Anything not on the list..."></textarea></div>
+    </div>
+
+    <div class="question key">
+      <div class="key-badge">★ Most important</div>
+      <div class="q-text">What keeps landing on you every time someone joins — that shouldn't?</div>
+      <div class="q-hint">The things you'd hand off immediately if there was someone to take them.</div>
+      <textarea class="text-input" placeholder="e.g. Explaining the architecture from scratch, tracking first-month progress, connecting them to the right people..."></textarea>
+    </div>
+
+    <div class="question">
+      <div class="q-text">Before their first day — did you have a plan?</div>
+      <div class="q-hint">How prepared did you feel going in, and what would have helped you prepare better?</div>
+      <div class="input-row" style="margin-bottom:14px;">
+        <button class="choice-btn">Yes, I had a clear plan</button>
+        <button class="choice-btn">Roughly — I figured it out as I went</button>
+        <button class="choice-btn">Not really — I was winging it</button>
+      </div>
+      <textarea class="text-input" style="min-height:60px;" placeholder="What would have helped you prepare better?"></textarea>
+    </div>
+
+    <div class="question">
+      <div class="q-text">What worked well that we should keep?</div>
+      <textarea class="text-input" placeholder="A session, a resource, something that made your job easier as a manager..."></textarea>
+    </div>
+
+    <div class="question">
+      <div class="q-text">Anything else we should know?</div>
+      <textarea class="text-input" placeholder="Anything that didn't fit the questions above..."></textarea>
+    </div>
+
+    <div class="submit-wrap">
+      <button class="btn-submit">Submit →</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const SECTIONS = [
+  { id:'section-b', name:'Per hire' },
+  { id:'section-c', name:'Cost & gaps' },
+  { id:'section-d', name:'Gaps' },
+];
+
+let hireCount = 2;
+
+function updateProgress() {
+  const scrollY = window.scrollY;
+  const docH = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = docH > 0 ? (scrollY / docH) * 100 : 0;
+  document.getElementById('progressFill').style.width = Math.min(pct, 100) + '%';
+  let active = SECTIONS[0];
+  SECTIONS.forEach(s => { const el = document.getElementById(s.id); if (el && el.getBoundingClientRect().top <= 120) active = s; });
+  const idx = SECTIONS.indexOf(active);
+  document.getElementById('progressName').textContent = active.name;
+  document.getElementById('progressCounter').textContent = 'Section ' + (idx+1) + ' / ' + SECTIONS.length;
+}
+window.addEventListener('scroll', updateProgress, { passive: true });
+
+function initTimePickers(root) {
+  (root || document).querySelectorAll('.time-unit-toggle').forEach(toggle => {
+    toggle.querySelectorAll('.time-unit-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        toggle.querySelectorAll('.time-unit-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        toggle.closest('.time-picker').querySelector('.time-label').textContent = btn.dataset.unit === 'weeks' ? 'weeks' : 'months';
+      });
+    });
+  });
+}
+
+function initChoiceRows(root) {
+  (root || document).querySelectorAll('.input-row').forEach(row => {
+    row.querySelectorAll('.choice-btn').forEach(btn => {
+      btn.addEventListener('click', () => { row.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected')); btn.classList.add('selected'); });
+    });
+  });
+}
+
+function renumberCards() {
+  const colors = ['#1a1a1a','#444','#666','#888','#aaa'];
+  document.querySelectorAll('#person-cards .person-card').forEach((card, i) => {
+    const av = card.querySelector('.person-avatar');
+    const lb = card.querySelector('.person-label');
+    const del = card.querySelector('.delete-card-btn');
+    if (av) { av.textContent = i+1; av.style.background = colors[Math.min(i,4)]; }
+    if (lb) lb.textContent = 'Hire #' + (i+1);
+    if (del) del.style.display = document.querySelectorAll('#person-cards .person-card').length > 1 ? '' : 'none';
+  });
+}
+
+function buildPersonCard(n) {
+  const card = document.createElement('div');
+  card.className = 'person-card';
+  card.innerHTML = `
+    <div class="person-card-header">
+      <div class="person-avatar">${n}</div>
+      <div class="person-label">Hire #${n}</div>
+      <button class="delete-card-btn" title="Remove">×</button>
+    </div>
+    <div class="person-card-body">
+      <div>
+        <div class="person-q-label">When did they join?</div>
+        <div class="input-row">
+          <button class="choice-btn">Jan–Feb 2026</button>
+          <button class="choice-btn">Mar–Apr 2026</button>
+          <button class="choice-btn">May–Jun 2026</button>
+        </div>
+      </div>
+      <div>
+        <div class="person-q-label">How long until they were working independently on standard tasks?</div>
+        <div class="time-picker">
+          <div class="time-unit-toggle"><button class="time-unit-btn active" data-unit="weeks">Weeks</button><button class="time-unit-btn" data-unit="months">Months</button></div>
+          <input type="number" class="time-number" placeholder="8" min="1">
+          <span class="time-label">weeks</span>
+        </div>
+        <div class="not-yet-wrap"><button class="not-yet-btn">Not yet</button></div>
+      </div>
+      <div class="key-block">
+        <div class="key-badge">★ Most important</div>
+        <div class="person-q-label">How long until you stopped reviewing their work more carefully than you would a peer's?</div>
+        <div class="person-q-hint">Your honest read. This is the manager-side ramp number.</div>
+        <div class="time-picker">
+          <div class="time-unit-toggle"><button class="time-unit-btn active" data-unit="weeks">Weeks</button><button class="time-unit-btn" data-unit="months">Months</button></div>
+          <input type="number" class="time-number" placeholder="14" min="1">
+          <span class="time-label">weeks</span>
+        </div>
+        <div class="not-yet-wrap"><button class="not-yet-btn">Not yet</button></div>
+      </div>
+    </div>`;
+  initTimePickers(card);
+  initChoiceRows(card);
+  card.querySelector('.delete-card-btn').addEventListener('click', () => {
+    card.remove();
+    hireCount = document.querySelectorAll('#person-cards .person-card').length;
+    renumberCards();
+  });
+  return card;
+}
+
+document.getElementById('add-person-btn').addEventListener('click', () => {
+  hireCount++;
+  const card = buildPersonCard(hireCount);
+  document.getElementById('person-cards').appendChild(card);
+  renumberCards();
+});
+
+// Init delete on first card
+document.querySelector('#person-cards .delete-card-btn').addEventListener('click', function() {
+  this.closest('.person-card').remove();
+  hireCount = document.querySelectorAll('#person-cards .person-card').length;
+  renumberCards();
+});
+renumberCards();
+
+document.querySelectorAll('.checkbox-item').forEach(item => {
+  item.addEventListener('click', () => item.classList.toggle('checked'));
+});
+
+document.querySelectorAll('.question').forEach(q => {
+  q.addEventListener('click', () => { document.querySelectorAll('.question').forEach(qq => qq.classList.remove('focused')); q.classList.add('focused'); });
+});
+
+initTimePickers();
+initChoiceRows();
+updateProgress();
+
+const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbwGNxfimfBDWKN20KzC1BeTGdZL7RiP9k8RrM62MMbSaitDOQXfdRqcrIJKJAyj4NQ/exec';
+const urlParams = new URLSearchParams(window.location.search);
+const TOKEN = urlParams.get('token') || 'DEMO';
+
+// ── PRE-FILL FROM BACKEND ─────────────────────────────────────
+function calcTenure(hireDateStr) {
+  if (!hireDateStr) return null;
+  const hire = new Date(hireDateStr);
+  const now = new Date();
+  const months = (now.getFullYear() - hire.getFullYear()) * 12 + (now.getMonth() - hire.getMonth());
+  if (months < 2) return Math.ceil((now - hire) / (1000*60*60*24*7)) + ' weeks';
+  return months + ' months';
+}
+
+if (TOKEN !== 'DEMO') {
+  fetch(BACKEND_URL + '?token=' + TOKEN + '&type=manager')
+    .then(r => r.json())
+    .then(async res => {
+      if (res.ok && res.data) {
+        const d = res.data;
+        const name = d['Full Name'] || '';
+        const role = d['Role'] || '';
+        const firstName = name.split(' ')[0];
+        const reportNames = (d['Direct Reports (names)'] || '').split(',').map(s => s.trim()).filter(Boolean);
+        const reportTokens = (d['Direct Reports (tokens)'] || '').split(',').map(s => s.trim()).filter(Boolean);
+
+        // Update greeting
+        const greeting = document.getElementById('personal-greeting');
+        if (greeting && firstName) {
+          greeting.textContent = `Hey ${firstName} — your take on onboarding is exactly what I need.`;
+        }
+
+        // Manager card
+        const card = document.getElementById('manager-card');
+        if (card && name) {
+          document.getElementById('manager-name').textContent = name;
+          document.getElementById('manager-role').textContent = role + (d['Site'] ? ' · ' + d['Site'] : '');
+
+          // Fetch hire dates for each report
+          const reportsEl = document.getElementById('manager-reports');
+          if (reportNames.length > 0) {
+            reportsEl.innerHTML = '<div style="margin-bottom:6px;color:rgba(255,255,255,0.4);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;">People you onboarded</div>';
+            const reportFetches = reportTokens.map(t =>
+              fetch(BACKEND_URL + '?token=' + t + '&type=joiner').then(r => r.json()).catch(() => null)
+            );
+            const results = await Promise.all(reportFetches);
+            reportNames.forEach((rName, i) => {
+              const rData = results[i]?.data;
+              const tenure = rData ? calcTenure(rData['Hire Date']) : null;
+              const rRole = rData ? (rData['Role'] || '') : '';
+              const line = document.createElement('div');
+              line.style.cssText = 'display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.06);';
+              line.innerHTML = `<span style="font-weight:500;">${rName}</span><span style="color:rgba(255,255,255,0.4);font-size:11px;">${rRole ? rRole + ' · ' : ''}${tenure || ''}</span>`;
+              reportsEl.appendChild(line);
+            });
+          }
+          card.style.display = 'block';
+        }
+      }
+    })
+    .catch(() => {});
+}
+
+function collectAnswers() {
+  const answers = {};
+  const hires = [];
+  document.querySelectorAll('.person-card').forEach((card, i) => {
+    const joinBtn = card.querySelector('.input-row .selected');
+    const timeNums = card.querySelectorAll('.time-number');
+    const timeUnits = card.querySelectorAll('.time-unit-btn.active');
+    hires.push({
+      hire_num: i + 1,
+      joined: joinBtn ? joinBtn.textContent.trim() : '',
+      weeks_independent: { value: timeNums[0]?.value, unit: timeUnits[0]?.dataset.unit },
+      weeks_review_peer: { value: timeNums[1]?.value, unit: timeUnits[1]?.dataset.unit },
+    });
+  });
+  answers.hires = hires;
+  document.querySelectorAll('.cost-select').forEach((sel, i) => { answers['cost_' + i] = sel.value; });
+  const built = [];
+  document.querySelectorAll('.checkbox-item.checked .checkbox-label').forEach(el => built.push(el.textContent.trim()));
+  answers.built_yourself = built;
+  document.querySelectorAll('textarea').forEach((ta, i) => { answers['open_' + (i+1)] = ta.value; });
+  return answers;
+}
+
+document.querySelector('.btn-submit').addEventListener('click', async function() {
+  this.textContent = 'Saving...';
+  this.disabled = true;
+  const payload = { token: TOKEN, type: 'manager', answers: collectAnswers() };
+  try {
+    await fetch(BACKEND_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    document.querySelector('.survey-wrap').innerHTML = `
+      <div style="text-align:center;padding:80px 24px;max-width:480px;margin:0 auto;">
+        <div style="font-size:48px;margin-bottom:24px;">🎉</div>
+        <div style="font-family:'Fraunces',serif;font-size:28px;font-weight:300;letter-spacing:-0.02em;margin-bottom:12px;">Thank you.</div>
+        <div style="font-size:15px;color:var(--mid);line-height:1.6;">Your answers have been saved.<br><br>
+        <span style="color:var(--pink);font-weight:500;">You can come back to this link anytime</span> to update before the survey closes.</div>
+      </div>`;
+  } catch(err) {
+    this.textContent = 'Submit →';
+    this.disabled = false;
+    alert('Something went wrong. Please try again.');
+  }
+});
+</script>
+</body>
+</html>
