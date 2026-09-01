@@ -547,7 +547,7 @@ async function loadServerData() {
     return;
   }
   try {
-    const res = await fetch(`${API_URL}?token=${TOKEN}&type=joiner`);
+    const res = await fetch(`${API_URL}?token=${TOKEN}&type=joiner&_=${Date.now()}`);
     const json = await res.json();
     if (json.ok && json.data) {
       applyPersonData(json.data);
