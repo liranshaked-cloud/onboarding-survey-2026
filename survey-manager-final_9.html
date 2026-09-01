@@ -420,7 +420,7 @@ initTimePickers();
 initChoiceRows();
 updateProgress();
 
-const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbyfRMiGUpnS47RL0aChJogQxealn-E2FCUp7ZupXQsrMYP8tI0yxiDVUgZY488Lk9Q/exec';
+const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbwygO8-rDRYW7UanedphUOR2FQJMInLsfNmEQPtgIe5bGjNN1jCQ_4lOS6NHFdAxic/exec';
 const urlParams = new URLSearchParams(window.location.search);
 const TOKEN = urlParams.get('token') || 'DEMO';
 
@@ -435,9 +435,9 @@ function calcTenure(hireDateStr) {
 }
 
 if (TOKEN !== 'DEMO') {
-  fetch(BACKEND_URL + '?token=' + TOKEN + '&type=manager')
-    .then(r => r.json())
-    .then(async res => {
+  const _cbName = 'jsonpCb_' + Date.now();
+  window[_cbName] = async function(res) {
+    delete window[_cbName];
       if (res.ok && res.data) {
         const d = res.data;
         const name = d['Full Name'] || '';
@@ -480,7 +480,11 @@ if (TOKEN !== 'DEMO') {
         }
       }
     })
-    .catch(() => {});
+  };
+  const _s = document.createElement('script');
+  _s.src = BACKEND_URL + '?token=' + TOKEN + '&type=manager&callback=' + _cbName;
+  _s.onerror = function() { delete window[_cbName]; };
+  document.head.appendChild(_s);
 }
 
 function collectAnswers() {
