@@ -2,123 +2,122 @@
 <html lang="en">
 <head>
   <link rel="preconnect" href="https://script.google.com" crossorigin>
-<link rel="preconnect" href="https://script.googleusercontent.com" crossorigin>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Onboarding Survey — Joiner</title>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --pink: #FF0083; --pink-light: #fff0f7; --charcoal: #1a1a1a;
-    --mid: #555; --light: #999; --border: #e8e8e8;
-    --bg: #fafafa; --white: #fff; --radius: 12px; --radius-sm: 8px;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--charcoal); min-height: 100vh; }
+  <link rel="preconnect" href="https://script.googleusercontent.com" crossorigin>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Onboarding Survey — Joiner</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --pink: #FF0083; --pink-light: #fff0f7; --charcoal: #1a1a1a;
+      --mid: #555; --light: #999; --border: #e8e8e8;
+      --bg: #fafafa; --white: #fff; --radius: 12px; --radius-sm: 8px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--charcoal); min-height: 100vh; }
 
-  .survey-header { background: var(--white); border-bottom: 1px solid var(--border); padding: 16px 0; position: sticky; top: 0; z-index: 100; }
-  .header-inner { max-width: 680px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; gap: 20px; }
-  .wordmark { font-family: 'Fraunces', serif; font-size: 17px; font-weight: 400; color: var(--charcoal); letter-spacing: -0.02em; white-space: nowrap; }
-  .wordmark span { color: var(--pink); }
-  .progress-area { flex: 1; display: flex; flex-direction: column; gap: 5px; }
-  .progress-meta { display: flex; justify-content: space-between; }
-  .progress-section-name { font-size: 11px; color: var(--mid); font-weight: 500; }
-  .progress-counter { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--light); }
-  .progress-bar { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
-  .progress-fill { height: 100%; background: var(--pink); border-radius: 2px; transition: width 0.35s ease; }
+    .survey-header { background: var(--white); border-bottom: 1px solid var(--border); padding: 16px 0; position: sticky; top: 0; z-index: 100; }
+    .header-inner { max-width: 680px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; gap: 20px; }
+    .wordmark { font-family: 'Fraunces', serif; font-size: 17px; font-weight: 400; color: var(--charcoal); letter-spacing: -0.02em; white-space: nowrap; }
+    .wordmark span { color: var(--pink); }
+    .progress-area { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+    .progress-meta { display: flex; justify-content: space-between; }
+    .progress-section-name { font-size: 11px; color: var(--mid); font-weight: 500; }
+    .progress-counter { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--light); }
+    .progress-bar { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--pink); border-radius: 2px; transition: width 0.35s ease; }
 
-  .survey-wrap { max-width: 680px; margin: 0 auto; padding: 0 24px 120px; }
-  .survey-section { padding-top: 52px; }
-  .section-intro { margin-bottom: 28px; }
-  .section-tag { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.12em; color: var(--pink); text-transform: uppercase; margin-bottom: 8px; }
-  .section-title { font-family: 'Fraunces', serif; font-size: 26px; font-weight: 300; line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 8px; }
-  .section-subtitle { font-size: 14px; color: var(--mid); line-height: 1.6; }
-  .section-divider { display: flex; align-items: center; gap: 16px; margin: 52px 0 0; }
-  .divider-line { flex: 1; height: 1px; background: var(--border); }
-  .divider-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.15em; color: var(--light); text-transform: uppercase; white-space: nowrap; }
+    .survey-wrap { max-width: 680px; margin: 0 auto; padding: 0 24px 120px; }
+    .survey-section { padding-top: 52px; }
+    .section-intro { margin-bottom: 28px; }
+    .section-tag { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.12em; color: var(--pink); text-transform: uppercase; margin-bottom: 8px; }
+    .section-title { font-family: 'Fraunces', serif; font-size: 26px; font-weight: 300; line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 8px; }
+    .section-subtitle { font-size: 14px; color: var(--mid); line-height: 1.6; }
+    .section-divider { display: flex; align-items: center; gap: 16px; margin: 52px 0 0; }
+    .divider-line { flex: 1; height: 1px; background: var(--border); }
+    .divider-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.15em; color: var(--light); text-transform: uppercase; white-space: nowrap; }
 
-  .question { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 12px; transition: border-color 0.2s; cursor: pointer; }
-  .question.focused { border-color: var(--pink); box-shadow: 0 0 0 3px rgba(255,0,131,0.06); }
-  .q-text { font-size: 15px; font-weight: 500; color: var(--charcoal); line-height: 1.5; margin-bottom: 6px; }
-  .q-hint { font-size: 12px; color: var(--light); margin-bottom: 16px; line-height: 1.5; }
+    .question { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 12px; transition: border-color 0.2s; cursor: pointer; }
+    .question.focused { border-color: var(--pink); box-shadow: 0 0 0 3px rgba(255,0,131,0.06); }
+    .q-text { font-size: 15px; font-weight: 500; color: var(--charcoal); line-height: 1.5; margin-bottom: 6px; }
+    .q-hint { font-size: 12px; color: var(--light); margin-bottom: 16px; line-height: 1.5; }
 
-  .input-row { display: flex; gap: 8px; flex-wrap: wrap; }
-  .choice-btn { border: 1.5px solid var(--border); background: var(--white); border-radius: var(--radius-sm); padding: 9px 16px; font-size: 13px; font-family: 'Inter', sans-serif; color: var(--charcoal); cursor: pointer; transition: all 0.15s; white-space: nowrap; }
-  .choice-btn:hover { border-color: var(--pink); color: var(--pink); }
-  .choice-btn.selected { border-color: var(--pink); background: var(--pink-light); color: var(--pink); font-weight: 500; }
+    .input-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .choice-btn { border: 1.5px solid var(--border); background: var(--white); border-radius: var(--radius-sm); padding: 9px 16px; font-size: 13px; font-family: 'Inter', sans-serif; color: var(--charcoal); cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+    .choice-btn:hover { border-color: var(--pink); color: var(--pink); }
+    .choice-btn.selected { border-color: var(--pink); background: var(--pink-light); color: var(--pink); font-weight: 500; }
 
-  .time-picker { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
-  .time-unit-toggle { display: flex; border: 1.5px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
-  .time-unit-btn { padding: 8px 14px; font-size: 12px; font-family: 'Inter', sans-serif; background: var(--white); border: none; cursor: pointer; color: var(--mid); transition: all 0.15s; }
-  .time-unit-btn.active { background: var(--pink); color: white; font-weight: 500; }
-  .time-number { width: 70px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 9px 12px; font-size: 15px; font-family: 'JetBrains Mono', monospace; color: var(--charcoal); text-align: center; outline: none; transition: border-color 0.15s; }
-  .time-number:focus { border-color: var(--pink); }
-  .time-label { font-size: 13px; color: var(--mid); }
-  .not-yet-wrap { margin-top: 10px; }
-  .not-yet-btn { font-size: 12px; color: var(--light); background: none; border: 1.5px dashed var(--border); border-radius: var(--radius-sm); padding: 7px 13px; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.15s; }
-  .not-yet-btn:hover { border-color: var(--pink); color: var(--pink); }
+    .time-picker { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+    .time-unit-toggle { display: flex; border: 1.5px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
+    .time-unit-btn { padding: 8px 14px; font-size: 12px; font-family: 'Inter', sans-serif; background: var(--white); border: none; cursor: pointer; color: var(--mid); transition: all 0.15s; }
+    .time-unit-btn.active { background: var(--pink); color: white; font-weight: 500; }
+    .time-number { width: 70px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 9px 12px; font-size: 15px; font-family: 'JetBrains Mono', monospace; color: var(--charcoal); text-align: center; outline: none; transition: border-color 0.15s; }
+    .time-number:focus { border-color: var(--pink); }
+    .time-label { font-size: 13px; color: var(--mid); }
+    .not-yet-wrap { margin-top: 10px; }
+    .not-yet-btn { font-size: 12px; color: var(--light); background: none; border: 1.5px dashed var(--border); border-radius: var(--radius-sm); padding: 7px 13px; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.15s; }
+    .not-yet-btn:hover { border-color: var(--pink); color: var(--pink); }
 
-  .checkbox-list { display: flex; flex-direction: column; gap: 8px; }
-  .checkbox-item { display: flex; align-items: center; gap: 12px; padding: 11px 16px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.15s; }
-  .checkbox-item:hover { border-color: #ccc; }
-  .checkbox-item.checked { border-color: var(--pink); background: var(--pink-light); }
-  .checkbox-box { width: 18px; height: 18px; border: 2px solid var(--border); border-radius: 4px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
-  .checkbox-item.checked .checkbox-box { border-color: var(--pink); background: var(--pink); }
-  .checkbox-check { color: white; font-size: 11px; display: none; }
-  .checkbox-item.checked .checkbox-check { display: block; }
-  .checkbox-label { font-size: 14px; color: var(--charcoal); }
+    .checkbox-list { display: flex; flex-direction: column; gap: 8px; }
+    .checkbox-item { display: flex; align-items: center; gap: 12px; padding: 11px 16px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.15s; }
+    .checkbox-item:hover { border-color: #ccc; }
+    .checkbox-item.checked { border-color: var(--pink); background: var(--pink-light); }
+    .checkbox-box { width: 18px; height: 18px; border: 2px solid var(--border); border-radius: 4px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+    .checkbox-item.checked .checkbox-box { border-color: var(--pink); background: var(--pink); }
+    .checkbox-check { color: white; font-size: 11px; display: none; }
+    .checkbox-item.checked .checkbox-check { display: block; }
+    .checkbox-label { font-size: 14px; color: var(--charcoal); }
 
-  .text-input { width: 100%; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 12px 16px; font-size: 14px; font-family: 'Inter', sans-serif; color: var(--charcoal); resize: vertical; min-height: 72px; outline: none; transition: border-color 0.15s; background: var(--white); }
-  .text-input:focus { border-color: var(--pink); }
+    .text-input { width: 100%; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 12px 16px; font-size: 14px; font-family: 'Inter', sans-serif; color: var(--charcoal); resize: vertical; min-height: 72px; outline: none; transition: border-color 0.15s; background: var(--white); }
+    .text-input:focus { border-color: var(--pink); }
 
-  .info-note { background: var(--pink-light); border-left: 3px solid var(--pink); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; padding: 12px 16px; font-size: 13px; color: var(--mid); margin-bottom: 16px; line-height: 1.5; }
+    .info-note { background: var(--pink-light); border-left: 3px solid var(--pink); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; padding: 12px 16px; font-size: 13px; color: var(--mid); margin-bottom: 16px; line-height: 1.5; }
 
-  .session-group-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--charcoal); font-weight: 500; margin-bottom: 4px; }
-  .session-group-sub { font-size: 11px; color: var(--light); margin-bottom: 12px; }
-  .session-header-row { display: grid; grid-template-columns: 1fr 150px 130px; gap: 12px; padding: 4px 14px; margin-bottom: 4px; }
-  .session-col-label { font-size: 10px; color: var(--light); text-align: center; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.05em; text-transform: uppercase; }
-  .session-card { border: 1.5px solid var(--border); border-radius: var(--radius-sm); margin-bottom: 8px; background: var(--white); overflow: hidden; }
-  .session-card-top { display: grid; grid-template-columns: 1fr 150px 130px; gap: 12px; align-items: center; padding: 12px 14px; }
-  .session-name { font-size: 13px; color: var(--charcoal); font-weight: 500; }
-  .session-rating { display: flex; gap: 4px; justify-content: center; }
-  .session-dot { width: 26px; height: 26px; border: 1.5px solid var(--border); border-radius: 50%; font-size: 11px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--light); transition: all 0.15s; font-family: 'JetBrains Mono', monospace; }
-  .session-dot:hover, .session-dot.selected { border-color: var(--pink); background: var(--pink-light); color: var(--pink); font-weight: 600; }
-  .timing-select { border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 6px 10px; font-size: 12px; font-family: 'Inter', sans-serif; color: var(--mid); background: var(--white); cursor: pointer; outline: none; width: 100%; }
-  .session-notes-wrap { border-top: 1px solid var(--border); padding: 8px 14px; background: var(--bg); }
-  .session-notes-toggle { font-size: 11px; color: var(--light); cursor: pointer; background: none; border: none; font-family: 'Inter', sans-serif; padding: 0; transition: color 0.15s; }
-  .session-notes-toggle:hover { color: var(--pink); }
-  .session-notes-input { display: none; margin-top: 8px; width: 100%; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 10px 14px; font-size: 13px; font-family: 'Inter', sans-serif; color: var(--charcoal); resize: none; min-height: 56px; outline: none; background: var(--white); transition: border-color 0.15s; }
-  .session-notes-input:focus { border-color: var(--pink); }
-  .session-notes-input.open { display: block; }
-  .session-separator { height: 1px; background: var(--border); margin: 24px 0; }
-  .role-prompt { background: var(--charcoal); border-radius: var(--radius-sm); padding: 20px 24px; color: rgba(255,255,255,0.6); font-size: 13px; text-align: center; line-height: 1.6; }
-  .role-prompt strong { color: white; }
-  .role-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--charcoal); color: white; font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 5px 12px; border-radius: 20px; margin-bottom: 16px; }
+    .session-group-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--charcoal); font-weight: 500; margin-bottom: 4px; }
+    .session-group-sub { font-size: 11px; color: var(--light); margin-bottom: 12px; }
+    .session-header-row { display: grid; grid-template-columns: 1fr 150px 130px; gap: 12px; padding: 4px 14px; margin-bottom: 4px; }
+    .session-col-label { font-size: 10px; color: var(--light); text-align: center; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.05em; text-transform: uppercase; }
+    .session-card { border: 1.5px solid var(--border); border-radius: var(--radius-sm); margin-bottom: 8px; background: var(--white); overflow: hidden; }
+    .session-card-top { display: grid; grid-template-columns: 1fr 150px 130px; gap: 12px; align-items: center; padding: 12px 14px; }
+    .session-name { font-size: 13px; color: var(--charcoal); font-weight: 500; }
+    .session-rating { display: flex; gap: 4px; justify-content: center; }
+    .session-dot { width: 26px; height: 26px; border: 1.5px solid var(--border); border-radius: 50%; font-size: 11px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--light); transition: all 0.15s; font-family: 'JetBrains Mono', monospace; }
+    .session-dot:hover, .session-dot.selected { border-color: var(--pink); background: var(--pink-light); color: var(--pink); font-weight: 600; }
+    .timing-select { border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 6px 10px; font-size: 12px; font-family: 'Inter', sans-serif; color: var(--mid); background: var(--white); cursor: pointer; outline: none; width: 100%; }
+    .session-notes-wrap { border-top: 1px solid var(--border); padding: 8px 14px; background: var(--bg); }
+    .session-notes-toggle { font-size: 11px; color: var(--light); cursor: pointer; background: none; border: none; font-family: 'Inter', sans-serif; padding: 0; transition: color 0.15s; }
+    .session-notes-toggle:hover { color: var(--pink); }
+    .session-notes-input { display: none; margin-top: 8px; width: 100%; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 10px 14px; font-size: 13px; font-family: 'Inter', sans-serif; color: var(--charcoal); resize: none; min-height: 56px; outline: none; background: var(--white); transition: border-color 0.15s; }
+    .session-notes-input:focus { border-color: var(--pink); }
+    .session-notes-input.open { display: block; }
+    .session-separator { height: 1px; background: var(--border); margin: 24px 0; }
+    .role-prompt { background: var(--charcoal); border-radius: var(--radius-sm); padding: 20px 24px; color: rgba(255,255,255,0.6); font-size: 13px; text-align: center; line-height: 1.6; }
+    .role-prompt strong { color: white; }
+    .role-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--charcoal); color: white; font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 5px 12px; border-radius: 20px; margin-bottom: 16px; }
 
-  .followup { display: none; margin-top: 14px; padding: 16px; background: var(--pink-light); border-radius: var(--radius-sm); border: 1.5px solid var(--pink); }
-  .followup.open { display: block; }
-  .followup-label { font-size: 13px; font-weight: 500; color: var(--charcoal); margin-bottom: 10px; }
+    .followup { display: none; margin-top: 14px; padding: 16px; background: var(--pink-light); border-radius: var(--radius-sm); border: 1.5px solid var(--pink); }
+    .followup.open { display: block; }
+    .followup-label { font-size: 13px; font-weight: 500; color: var(--charcoal); margin-bottom: 10px; }
 
-  .submit-wrap { margin-top: 40px; display: flex; justify-content: flex-end; }
-  .btn-submit { background: var(--pink); color: white; border: none; border-radius: var(--radius-sm); padding: 14px 32px; font-size: 15px; font-weight: 500; font-family: 'Inter', sans-serif; cursor: pointer; transition: opacity 0.15s; }
-  .btn-submit:hover { opacity: 0.88; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-.pulse-loading {
-  text-align: center;
-  padding: 60px 20px;
-  font-size: 1.25rem;
-  font-weight: 500;
-  color: #ff0055; /* הצבע הוורוד של למון */
-  animation: pulse 1.5s infinite ease-in-out;
-}
+    .submit-wrap { margin-top: 40px; display: flex; justify-content: flex-end; }
+    .btn-submit { background: var(--pink); color: white; border: none; border-radius: var(--radius-sm); padding: 14px 32px; font-size: 15px; font-weight: 500; font-family: 'Inter', sans-serif; cursor: pointer; transition: opacity 0.15s; }
+    .btn-submit:hover { opacity: 0.88; }
 
-@keyframes pulse {
-  0% { opacity: 0.4; transform: scale(0.98); }
-  50% { opacity: 1; transform: scale(1); }
-  100% { opacity: 0.4; transform: scale(0.98); }
-}
-  
-</style>
+    .pulse-loading {
+      text-align: center;
+      padding: 60px 20px;
+      font-size: 1.25rem;
+      font-weight: 500;
+      color: #ff0055; /* הצבע הוורוד של למון */
+      animation: pulse 1.5s infinite ease-in-out;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.4; transform: scale(0.98); }
+      50% { opacity: 1; transform: scale(1); }
+      100% { opacity: 0.4; transform: scale(0.98); }
+    }
+  </style>
 </head>
 <body>
 
@@ -143,9 +142,11 @@
       <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:var(--pink);text-transform:uppercase;margin-bottom:14px;">Liran Shaked · L&amp;D Lead Tech Dev</div>
       <div id="personal-greeting" style="font-family:'Fraunces',serif;font-size:22px;font-weight:300;line-height:1.3;letter-spacing:-0.02em;margin-bottom:16px;">I joined Lemonade a few months ago to lead L&D — and onboarding is the first thing I'm working on.</div>
       <div id="person-card" style="display:block;background:rgba(255,255,255,0.08);border-radius:8px;padding:14px 18px;margin-bottom:16px;font-size:13px;color:rgba(255,255,255,0.9);line-height:1.8;">
-        <div id="joiner-loading" class="pulse-loading">
-  Loading your onboarding details... ⏳
-</div>
+        
+        <div id="person-loading" class="pulse-loading">
+          Loading your onboarding details... ⏳
+        </div>
+        
         <div id="person-name" style="font-weight:600;font-size:15px;margin-bottom:4px;"></div>
         <div id="person-role" style="color:rgba(255,255,255,0.6);"></div>
         <div id="person-tenure" style="color:rgba(255,255,255,0.5);font-size:12px;margin-top:2px;"></div>
@@ -374,7 +375,7 @@ const BLOCKERS = {
 const OPERATIONAL = [
   { name:'QA @ Lemonade',                roles:['dev','pm','tl','pa'] },
   { name:'Architecture Overview',         roles:['dev','ds','pm','tl'] },
-  { name:'Product Values',               roles:['pm','da','designer','pa','dev','tl'] },
+  { name:'Product Values',                roles:['pm','da','designer','pa','dev','tl'] },
   { name:'Product Work @ Lemonade',      roles:['pm','designer'] },
   { name:'From OKRs to Weekly Planning', roles:['pm','tl'] },
   { name:'How We Do OKRs',               roles:['pm','da','tl','pa'] },
@@ -555,7 +556,7 @@ function applyPersonData(d) {
   }
 }
 
-// JSONP פנייה מהירה באמצעות
+// קריאה מאובטחת ללא מטמון - מבטיחה שכל אחד יראה את המידע הכי עדכני!
 async function loadServerData() {
   const loadingEl = document.getElementById('person-loading');
   if (!TOKEN) {
