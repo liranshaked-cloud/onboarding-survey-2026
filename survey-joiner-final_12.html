@@ -458,18 +458,6 @@ function renderBlockers(role) {
   list.appendChild(otherWrap);
 }
 
-// Role selector
-document.getElementById('role-selector').querySelectorAll('.choice-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.getElementById('role-selector').querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected'));
-    btn.classList.add('selected');
-    selectedRole = btn.dataset.role;
-    renderSessions(selectedRole);
-    renderBlockers(selectedRole);
-    document.getElementById('b01-text').textContent = B01[selectedRole] || B01.general;
-  });
-});
-
 // Buddy follow-up
 document.getElementById('buddy-selector').querySelectorAll('.choice-btn').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -494,7 +482,7 @@ document.querySelectorAll('.time-unit-toggle').forEach(toggle => {
 });
 
 // Generic choice rows
-document.querySelectorAll('.input-row:not(#role-selector):not(#buddy-selector)').forEach(row => {
+document.querySelectorAll('.input-row:not(#buddy-selector)').forEach(row => {
   row.querySelectorAll('.choice-btn').forEach(btn => {
     btn.addEventListener('click', () => { row.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected')); btn.classList.add('selected'); });
   });
@@ -580,8 +568,8 @@ function collectAnswers() {
   const answers = {};
 
   // Role & site
-  const roleBtn = document.querySelector('#role-selector .selected');
-  answers.role = roleBtn ? roleBtn.textContent.trim() : '';
+  const roleBtn = null;
+  answers.role = selectedRole ? ROLE_LABELS[selectedRole] : '';
 
   // Ramp questions
   document.querySelectorAll('.time-number').forEach((inp, i) => {
@@ -629,7 +617,7 @@ document.querySelector('.btn-submit').addEventListener('click', async function()
   const payload = {
     token: TOKEN,
     type: 'joiner',
-    role: document.querySelector('#role-selector .selected')?.textContent.trim() || '',
+    role: selectedRole ? ROLE_LABELS[selectedRole] : '',
     site: '', // collected in answers
     answers: collectAnswers()
   };
