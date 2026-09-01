@@ -97,6 +97,7 @@
   .submit-wrap { margin-top: 40px; display: flex; justify-content: flex-end; }
   .btn-submit { background: var(--pink); color: white; border: none; border-radius: var(--radius-sm); padding: 14px 32px; font-size: 15px; font-weight: 500; font-family: 'Inter', sans-serif; cursor: pointer; transition: opacity 0.15s; }
   .btn-submit:hover { opacity: 0.88; }
+  @keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
@@ -123,7 +124,11 @@
       
       <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:var(--pink);text-transform:uppercase;margin-bottom:14px;">Liran Shaked · L&amp;D Lead Tech Dev</div>
       <div id="personal-greeting" style="font-family:'Fraunces',serif;font-size:22px;font-weight:300;line-height:1.3;letter-spacing:-0.02em;margin-bottom:16px;">I joined Lemonade a few months ago to lead L&D — and onboarding is the first thing I'm working on.</div>
-      <div id="manager-card" style="display:none;background:rgba(255,255,255,0.08);border-radius:8px;padding:14px 18px;margin-bottom:16px;font-size:13px;color:rgba(255,255,255,0.9);line-height:1.8;">
+      <div id="manager-card" style="display:block;background:rgba(255,255,255,0.08);border-radius:8px;padding:14px 18px;margin-bottom:16px;font-size:13px;color:rgba(255,255,255,0.9);line-height:1.8;">
+        <div id="manager-loading" style="color:rgba(255,255,255,0.4);font-size:12px;display:flex;align-items:center;gap:8px;">
+          <span style="display:inline-block;width:10px;height:10px;border:2px solid rgba(255,255,255,0.2);border-top-color:rgba(255,255,255,0.6);border-radius:50%;animation:spin 0.8s linear infinite;"></span>
+          Loading your details...
+        </div>
         <div id="manager-name" style="font-weight:600;font-size:15px;margin-bottom:2px;"></div>
         <div id="manager-role" style="color:rgba(255,255,255,0.5);font-size:12px;margin-bottom:10px;"></div>
         <div id="manager-reports" style="color:rgba(255,255,255,0.75);font-size:12px;line-height:1.9;border-top:1px solid rgba(255,255,255,0.1);padding-top:10px;"></div>
@@ -339,18 +344,21 @@ function renumberCards() {
     const lb = card.querySelector('.person-label');
     const del = card.querySelector('.delete-card-btn');
     if (av) { av.textContent = i+1; av.style.background = colors[Math.min(i,4)]; }
-    if (lb) lb.textContent = 'Hire #' + (i+1);
+    if (lb && lb.dataset.generic !== 'false') { lb.textContent = 'Hire #' + (i+1); lb.dataset.generic = 'true'; }
     if (del) del.style.display = document.querySelectorAll('#person-cards .person-card').length > 1 ? '' : 'none';
   });
 }
 
-function buildPersonCard(n) {
+function buildPersonCard(n, realName) {
   const card = document.createElement('div');
   card.className = 'person-card';
+  card.dataset.idx = n - 1;
+  const displayLabel = realName ? realName : 'Hire #' + n;
   card.innerHTML = `
     <div class="person-card-header">
       <div class="person-avatar">${n}</div>
-      <div class="person-label">Hire #${n}</div>
+      <div class="person-label" data-generic="${realName ? 'false' : 'true'}">${displayLabel}</div>
+      <span class="hire-tenure-hint" style="font-size:11px;color:var(--light);margin-left:8px;"></span>
       <button class="delete-card-btn" title="Remove">×</button>
     </div>
     <div class="person-card-body">
@@ -420,7 +428,7 @@ initTimePickers();
 initChoiceRows();
 updateProgress();
 
-const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbwAr0Xe6jqqFdbQUQmRNjD_liFEQGzEgcnDcH6xiKP3DbWMPsqfDIIMYSaVKMEVBFA/exec';
+const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbw5C96ZZOK7V93ve4tFbBVccrOIsjXORtdxLEjOsuRG7q0Ny3diQelVmFzL5fk2VU0/exec';
 const urlParams = new URLSearchParams(window.location.search);
 const TOKEN = urlParams.get('token') || 'DEMO';
 
@@ -455,28 +463,48 @@ if (TOKEN !== 'DEMO') {
         // Manager card
         const card = document.getElementById('manager-card');
         if (card && name) {
+          const loading = document.getElementById('manager-loading');
+          if (loading) loading.remove();
           document.getElementById('manager-name').textContent = name;
           document.getElementById('manager-role').textContent = role + (d['Site'] ? ' · ' + d['Site'] : '');
-
-          // Fetch hire dates for each report
-          const reportsEl = document.getElementById('manager-reports');
-          if (reportNames.length > 0) {
-            reportsEl.innerHTML = '<div style="margin-bottom:6px;color:rgba(255,255,255,0.4);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;">People you onboarded</div>';
-            const reportFetches = reportTokens.map(t =>
-              fetch(BACKEND_URL + '?token=' + t + '&type=joiner').then(r => r.json()).catch(() => null)
-            );
-            const results = await Promise.all(reportFetches);
-            reportNames.forEach((rName, i) => {
-              const rData = results[i]?.data;
-              const tenure = rData ? calcTenure(rData['Hire Date']) : null;
-              const rRole = rData ? (rData['Role'] || '') : '';
-              const line = document.createElement('div');
-              line.style.cssText = 'display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.06);';
-              line.innerHTML = `<span style="font-weight:500;">${rName}</span><span style="color:rgba(255,255,255,0.4);font-size:11px;">${rRole ? rRole + ' · ' : ''}${tenure || ''}</span>`;
-              reportsEl.appendChild(line);
-            });
-          }
           card.style.display = 'block';
+        }
+
+        // Build per-hire cards using real names + fetch tenure via JSONP
+        if (reportNames.length > 0) {
+          const containerEl = document.getElementById('person-cards');
+          containerEl.innerHTML = '';
+          hireCount = reportNames.length;
+
+          reportNames.forEach((rName, i) => {
+            const hireCard = buildPersonCard(i + 1, rName);
+            containerEl.appendChild(hireCard);
+          });
+          renumberCards();
+
+          // Show/hide add button — hide if we know exact reports, keep as fallback
+          const addBtn = document.getElementById('add-person-btn');
+          if (addBtn) addBtn.textContent = '+ Add another hire not listed';
+
+          // Fetch ALL reports' data in ONE batch JSONP call (was N separate calls)
+          if (reportTokens.length > 0) {
+            const batchCbName = 'jsonpBatch_' + Date.now();
+            window[batchCbName] = function(bres) {
+              delete window[batchCbName];
+              if (bres.ok && bres.data) {
+                reportTokens.forEach((t, i) => {
+                  const rData = bres.data[t];
+                  if (!rData) return;
+                  const tenure = calcTenure(rData['Hire Date']);
+                  const hint = document.querySelector(`#person-cards .person-card[data-idx="${i}"] .hire-tenure-hint`);
+                  if (hint && tenure) hint.textContent = `Joined ${tenure} ago`;
+                });
+              }
+            };
+            const bs = document.createElement('script');
+            bs.src = BACKEND_URL + '?tokens=' + encodeURIComponent(reportTokens.join(',')) + '&callback=' + batchCbName + '&_=' + Date.now();
+            document.head.appendChild(bs);
+          }
         }
       }
   };
