@@ -2,25 +2,6 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<script>
-// ── EARLY PRELOAD — fires before CSS/fonts load
-window.__preloadData = null;
-window.__preloadDone = false;
-(function() {
-  const params = new URLSearchParams(window.location.search);
-  const token = params.get('token');
-  if (!token || token === 'DEMO') { window.__preloadDone = true; return; }
-  const BACKEND = 'https://script.google.com/macros/s/AKfycbyZlazoNMigocSkm36aTzlfiLBpl6ntPLBqvt3qgHv22fn3jCpAyJGtLvXA-vlEzGw/exec';
-  window.__preloadCb = function(res) {
-    window.__preloadData = res;
-    window.__preloadDone = true;
-    if (window.__onPreloadReady) window.__onPreloadReady(res);
-  };
-  const s = document.createElement('script');
-  s.src = BACKEND + '?token=' + token + '&type=manager&callback=__preloadCb&_=' + Date.now();
-  document.head.appendChild(s);
-})();
-</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Onboarding Survey — Manager</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -91,7 +72,6 @@ window.__preloadDone = false;
   .checkbox-item.checked .checkbox-check { display: block; }
   .checkbox-label { font-size: 14px; color: var(--charcoal); }
 
-  /* Person cards */
   .person-cards { display: flex; flex-direction: column; gap: 14px; }
   .person-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
   .person-card-header { background: var(--bg); border-bottom: 1px solid var(--border); padding: 14px 20px; display: flex; align-items: center; gap: 12px; }
@@ -168,46 +148,7 @@ window.__preloadDone = false;
 
     <div class="info-note">This is ramp data that's never been collected before. Your estimates don't need to be precise — just honest.</div>
 
-    <div class="person-cards" id="person-cards">
-      <!-- Card 1 -->
-      <div class="person-card">
-        <div class="person-card-header">
-          <div class="person-avatar">1</div>
-          <div class="person-label">Hire #1</div>
-          <button class="delete-card-btn" title="Remove" style="display:none;">×</button>
-        </div>
-        <div class="person-card-body">
-          <div>
-            <div class="person-q-label">When did they join?</div>
-            <div class="input-row">
-              <button class="choice-btn">Jan–Feb 2026</button>
-              <button class="choice-btn">Mar–Apr 2026</button>
-              <button class="choice-btn">May–Jun 2026</button>
-            </div>
-          </div>
-          <div>
-            <div class="person-q-label">How long until they were working independently on standard tasks?</div>
-            <div class="time-picker">
-              <div class="time-unit-toggle"><button class="time-unit-btn active" data-unit="weeks">Weeks</button><button class="time-unit-btn" data-unit="months">Months</button></div>
-              <input type="number" class="time-number" placeholder="8" min="1">
-              <span class="time-label">weeks</span>
-            </div>
-            <div class="not-yet-wrap"><button class="not-yet-btn">Not yet</button></div>
-          </div>
-          <div class="key-block">
-            <div class="key-badge">★ Most important</div>
-            <div class="person-q-label">How long until you stopped reviewing their work more carefully than you would a peer's?</div>
-            <div class="person-q-hint">Your honest read. This is the manager-side ramp number.</div>
-            <div class="time-picker">
-              <div class="time-unit-toggle"><button class="time-unit-btn active" data-unit="weeks">Weeks</button><button class="time-unit-btn" data-unit="months">Months</button></div>
-              <input type="number" class="time-number" placeholder="14" min="1">
-              <span class="time-label">weeks</span>
-            </div>
-            <div class="not-yet-wrap"><button class="not-yet-btn">Not yet</button></div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <div class="person-cards" id="person-cards"></div>
 
     <button class="add-person-btn" id="add-person-btn">+ Add another hire</button>
   </div>
@@ -315,13 +256,18 @@ window.__preloadDone = false;
 </div>
 
 <script>
+const API_URL = 'https://script.google.com/macros/s/AKfycbzWcfwBEhCDQ9tgLh4EnfQ_1-03BflyApyaOFjeFNKmaEc8W62oVy6H71EC4VxMUAo/exec'; 
+
+const urlParams = new URLSearchParams(window.location.search);
+const TOKEN = urlParams.get('token');
+
 const SECTIONS = [
   { id:'section-b', name:'Per hire' },
   { id:'section-c', name:'Cost & gaps' },
   { id:'section-d', name:'Gaps' },
 ];
 
-let hireCount = 2;
+let hireCount = 0;
 
 function updateProgress() {
   const scrollY = window.scrollY;
@@ -427,14 +373,6 @@ document.getElementById('add-person-btn').addEventListener('click', () => {
   renumberCards();
 });
 
-// Init delete on first card
-document.querySelector('#person-cards .delete-card-btn').addEventListener('click', function() {
-  this.closest('.person-card').remove();
-  hireCount = document.querySelectorAll('#person-cards .person-card').length;
-  renumberCards();
-});
-renumberCards();
-
 document.querySelectorAll('.checkbox-item').forEach(item => {
   item.addEventListener('click', () => item.classList.toggle('checked'));
 });
@@ -447,28 +385,13 @@ initTimePickers();
 initChoiceRows();
 updateProgress();
 
-const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbyZlazoNMigocSkm36aTzlfiLBpl6ntPLBqvt3qgHv22fn3jCpAyJGtLvXA-vlEzGw/exec';
-const urlParams = new URLSearchParams(window.location.search);
-const TOKEN = urlParams.get('token') || 'DEMO';
+function applyManagerData(d, reportsData) {
+  const loading = document.getElementById('manager-loading');
+  if (loading) loading.style.display = 'none';
 
-// ── PRE-FILL FROM BACKEND ─────────────────────────────────────
-function calcTenure(hireDateStr) {
-  if (!hireDateStr) return null;
-  const hire = new Date(hireDateStr);
-  const now = new Date();
-  const months = (now.getFullYear() - hire.getFullYear()) * 12 + (now.getMonth() - hire.getMonth());
-  if (months < 2) return Math.ceil((now - hire) / (1000*60*60*24*7)) + ' weeks';
-  return months + ' months';
-}
-
-function applyManagerData(res) {
-  if (!(res && res.ok && res.data)) return;
-  const d = res.data;
-  const name = d['Full Name'] || '';
-  const role = d['Role'] || '';
-  const firstName = name.split(' ')[0];
-  const reportNames = (d['Direct Reports (names)'] || '').split(',').map(s => s.trim()).filter(Boolean);
-  const reportTokens = (d['Direct Reports (tokens)'] || '').split(',').map(s => s.trim()).filter(Boolean);
+  const name = d.name || '';
+  const role = d.role || '';
+  const firstName = name ? name.split(' ')[0] : '';
 
   const greeting = document.getElementById('personal-greeting');
   if (greeting && firstName) {
@@ -476,63 +399,65 @@ function applyManagerData(res) {
   }
 
   const card = document.getElementById('manager-card');
-  if (card && name) {
-    const loading = document.getElementById('manager-loading');
-    if (loading) loading.remove();
-    document.getElementById('manager-name').textContent = name;
-    document.getElementById('manager-role').textContent = role + (d['Site'] ? ' · ' + d['Site'] : '');
+  if (card) {
+    if (document.getElementById('manager-name')) document.getElementById('manager-name').textContent = name;
+    
+    let managerMeta = role + (d.site ? ' · ' + d.site : '');
+    if (d.displayTenure) {
+      managerMeta += ' · ' + d.displayTenure;
+    }
+    if (document.getElementById('manager-role')) document.getElementById('manager-role').textContent = managerMeta;
+    
     card.style.display = 'block';
   }
 
-  if (reportNames.length > 0) {
+  if (reportsData && Object.keys(reportsData).length > 0) {
     const containerEl = document.getElementById('person-cards');
     containerEl.innerHTML = '';
-    hireCount = reportNames.length;
+    const reportTokens = Object.keys(reportsData);
+    hireCount = reportTokens.length;
 
-    reportNames.forEach((rName, i) => {
+    reportTokens.forEach((t, i) => {
+      const rData = reportsData[t];
+      const rName = rData.name || ('Hire #' + (i + 1));
+
       const hireCard = buildPersonCard(i + 1, rName);
       containerEl.appendChild(hireCard);
+
+      const hint = hireCard.querySelector('.hire-tenure-hint');
+      if (hint && rData.hintText) hint.textContent = rData.hintText;
     });
-    const colors = ['#1a1a1a','#444','#666','#888','#aaa'];
-    containerEl.querySelectorAll('.person-card').forEach((c, i) => {
-      const av = c.querySelector('.person-avatar');
-      if (av) av.style.background = colors[Math.min(i,4)];
-      const del = c.querySelector('.delete-card-btn');
-      if (del) del.style.display = reportNames.length > 1 ? '' : 'none';
-    });
+
+    renumberCards();
 
     const addBtn = document.getElementById('add-person-btn');
     if (addBtn) addBtn.textContent = '+ Add another hire not listed';
-
-    if (reportTokens.length > 0) {
-      const batchCbName = 'jsonpBatch_' + Date.now();
-      window[batchCbName] = function(bres) {
-        delete window[batchCbName];
-        if (bres.ok && bres.data) {
-          reportTokens.forEach((t, i) => {
-            const rData = bres.data[t];
-            if (!rData) return;
-            const tenure = calcTenure(rData['Hire Date']);
-            const hint = document.querySelector(`#person-cards .person-card[data-idx="${i}"] .hire-tenure-hint`);
-            if (hint && tenure) hint.textContent = `Joined ${tenure} ago`;
-          });
-        }
-      };
-      const bs = document.createElement('script');
-      bs.src = BACKEND_URL + '?tokens=' + encodeURIComponent(reportTokens.join(',')) + '&callback=' + batchCbName + '&_=' + Date.now();
-      document.head.appendChild(bs);
-    }
-  }
-}
-
-// Use preloaded data if it already arrived — otherwise wait for it.
-if (TOKEN !== 'DEMO') {
-  if (window.__preloadDone) {
-    applyManagerData(window.__preloadData);
   } else {
-    window.__onPreloadReady = applyManagerData;
+    hireCount = 1;
+    document.getElementById('person-cards').appendChild(buildPersonCard(1));
+    renumberCards();
   }
 }
+
+// JSONP פנייה מהירה באמצעות
+function loadServerData() {
+  if (!TOKEN) {
+    document.getElementById('manager-loading').textContent = 'Error: No token provided in URL.';
+    return;
+  }
+  window.__managerCb = function(res) {
+    if (res && res.ok && res.data) {
+      applyManagerData(res.data, res.reports);
+    } else {
+      document.getElementById('manager-loading').textContent = 'Error: Manager not found.';
+    }
+  };
+  const script = document.createElement('script');
+  script.src = `${API_URL}?token=${TOKEN}&type=manager&callback=__managerCb`;
+  document.head.appendChild(script);
+}
+
+loadServerData();
 
 function collectAnswers() {
   const answers = {};
@@ -562,7 +487,7 @@ document.querySelector('.btn-submit').addEventListener('click', async function()
   this.disabled = true;
   const payload = { token: TOKEN, type: 'manager', answers: collectAnswers() };
   try {
-    await fetch(BACKEND_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    await fetch(API_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
     document.querySelector('.survey-wrap').innerHTML = `
       <div style="text-align:center;padding:80px 24px;max-width:480px;margin:0 auto;">
         <div style="font-size:48px;margin-bottom:24px;">🎉</div>
