@@ -102,6 +102,7 @@
   .submit-wrap { margin-top: 40px; display: flex; justify-content: flex-end; }
   .btn-submit { background: var(--pink); color: white; border: none; border-radius: var(--radius-sm); padding: 14px 32px; font-size: 15px; font-weight: 500; font-family: 'Inter', sans-serif; cursor: pointer; transition: opacity 0.15s; }
   .btn-submit:hover { opacity: 0.88; }
+  @keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
@@ -126,7 +127,11 @@
     <div style="background:var(--charcoal);border-radius:var(--radius);padding:32px;color:white;">
       <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:var(--pink);text-transform:uppercase;margin-bottom:14px;">Liran Shaked · L&amp;D Lead Tech Dev</div>
       <div id="personal-greeting" style="font-family:'Fraunces',serif;font-size:22px;font-weight:300;line-height:1.3;letter-spacing:-0.02em;margin-bottom:16px;">I joined Lemonade a few months ago to lead L&D — and onboarding is the first thing I'm working on.</div>
-      <div id="person-card" style="display:none;background:rgba(255,255,255,0.08);border-radius:8px;padding:14px 18px;margin-bottom:16px;font-size:13px;color:rgba(255,255,255,0.9);line-height:1.8;">
+      <div id="person-card" style="display:block;background:rgba(255,255,255,0.08);border-radius:8px;padding:14px 18px;margin-bottom:16px;font-size:13px;color:rgba(255,255,255,0.9);line-height:1.8;">
+        <div id="person-loading" style="color:rgba(255,255,255,0.4);font-size:12px;display:flex;align-items:center;gap:8px;">
+          <span style="display:inline-block;width:10px;height:10px;border:2px solid rgba(255,255,255,0.2);border-top-color:rgba(255,255,255,0.6);border-radius:50%;animation:spin 0.8s linear infinite;"></span>
+          Loading your details...
+        </div>
         <div id="person-name" style="font-weight:600;font-size:15px;margin-bottom:4px;"></div>
         <div id="person-role" style="color:rgba(255,255,255,0.6);"></div>
         <div id="person-tenure" style="color:rgba(255,255,255,0.5);font-size:12px;margin-top:2px;"></div>
@@ -497,7 +502,7 @@ renderBlockers('general');
 updateProgress();
 
 // ── BACKEND CONFIG ────────────────────────────────────────────
-const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbwAr0Xe6jqqFdbQUQmRNjD_liFEQGzEgcnDcH6xiKP3DbWMPsqfDIIMYSaVKMEVBFA/exec';
+const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbw5C96ZZOK7V93ve4tFbBVccrOIsjXORtdxLEjOsuRG7q0Ny3diQelVmFzL5fk2VU0/exec';
 const urlParams = new URLSearchParams(window.location.search);
 const TOKEN = urlParams.get('token') || 'DEMO';
 
@@ -540,6 +545,8 @@ if (TOKEN !== 'DEMO') {
         // Person card
         const card = document.getElementById('person-card');
         if (card && name) {
+          const loading = document.getElementById('person-loading');
+          if (loading) loading.remove();
           document.getElementById('person-name').textContent = name;
           document.getElementById('person-role').textContent = role;
           document.getElementById('person-tenure').textContent = tenure ? `${tenure} at Lemonade` : '';
