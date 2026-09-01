@@ -440,21 +440,24 @@ function applyManagerData(d, reportsData) {
 }
 
 // JSONP פנייה מהירה באמצעות
-function loadServerData() {
+async function loadServerData() {
+  const loadingEl = document.getElementById('manager-loading');
   if (!TOKEN) {
-    document.getElementById('manager-loading').textContent = 'Error: No token provided in URL.';
+    if (loadingEl) loadingEl.textContent = 'Error: No token provided in URL.';
     return;
   }
-  window.__managerCb = function(res) {
-    if (res && res.ok && res.data) {
-      applyManagerData(res.data, res.reports);
+  try {
+    const res = await fetch(`${API_URL}?token=${TOKEN}&type=manager`, { redirect: 'follow' });
+    const json = await res.json();
+    if (json.ok && json.data) {
+      applyManagerData(json.data, json.reports);
     } else {
-      document.getElementById('manager-loading').textContent = 'Error: Manager not found.';
+      if (loadingEl) loadingEl.textContent = 'Error: ' + (json.error || 'Manager not found.');
     }
-  };
-  const script = document.createElement('script');
-  script.src = `${API_URL}?token=${TOKEN}&type=manager&callback=__managerCb`;
-  document.head.appendChild(script);
+  } catch (err) {
+    console.error('Fetch error:', err);
+    if (loadingEl) loadingEl.textContent = 'Error loading data. Check DevTools Console.';
+  }
 }
 
 loadServerData();
