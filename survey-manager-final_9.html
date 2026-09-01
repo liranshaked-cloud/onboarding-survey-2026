@@ -2,6 +2,25 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<script>
+// ── EARLY PRELOAD — fires before CSS/fonts load
+window.__preloadData = null;
+window.__preloadDone = false;
+(function() {
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get('token');
+  if (!token || token === 'DEMO') { window.__preloadDone = true; return; }
+  const BACKEND = 'https://script.google.com/macros/s/AKfycbyZlazoNMigocSkm36aTzlfiLBpl6ntPLBqvt3qgHv22fn3jCpAyJGtLvXA-vlEzGw/exec';
+  window.__preloadCb = function(res) {
+    window.__preloadData = res;
+    window.__preloadDone = true;
+    if (window.__onPreloadReady) window.__onPreloadReady(res);
+  };
+  const s = document.createElement('script');
+  s.src = BACKEND + '?token=' + token + '&type=manager&callback=__preloadCb&_=' + Date.now();
+  document.head.appendChild(s);
+})();
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Onboarding Survey — Manager</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -428,7 +447,7 @@ initTimePickers();
 initChoiceRows();
 updateProgress();
 
-const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbw5C96ZZOK7V93ve4tFbBVccrOIsjXORtdxLEjOsuRG7q0Ny3diQelVmFzL5fk2VU0/exec';
+const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbyZlazoNMigocSkm36aTzlfiLBpl6ntPLBqvt3qgHv22fn3jCpAyJGtLvXA-vlEzGw/exec';
 const urlParams = new URLSearchParams(window.location.search);
 const TOKEN = urlParams.get('token') || 'DEMO';
 
@@ -442,76 +461,77 @@ function calcTenure(hireDateStr) {
   return months + ' months';
 }
 
-if (TOKEN !== 'DEMO') {
-  const _cbName = 'jsonpCb_' + Date.now();
-  window[_cbName] = async function(res) {
-    delete window[_cbName];
-      if (res.ok && res.data) {
-        const d = res.data;
-        const name = d['Full Name'] || '';
-        const role = d['Role'] || '';
-        const firstName = name.split(' ')[0];
-        const reportNames = (d['Direct Reports (names)'] || '').split(',').map(s => s.trim()).filter(Boolean);
-        const reportTokens = (d['Direct Reports (tokens)'] || '').split(',').map(s => s.trim()).filter(Boolean);
+function applyManagerData(res) {
+  if (!(res && res.ok && res.data)) return;
+  const d = res.data;
+  const name = d['Full Name'] || '';
+  const role = d['Role'] || '';
+  const firstName = name.split(' ')[0];
+  const reportNames = (d['Direct Reports (names)'] || '').split(',').map(s => s.trim()).filter(Boolean);
+  const reportTokens = (d['Direct Reports (tokens)'] || '').split(',').map(s => s.trim()).filter(Boolean);
 
-        // Update greeting
-        const greeting = document.getElementById('personal-greeting');
-        if (greeting && firstName) {
-          greeting.textContent = `Hey ${firstName} — your take on onboarding is exactly what I need.`;
-        }
+  const greeting = document.getElementById('personal-greeting');
+  if (greeting && firstName) {
+    greeting.textContent = `Hey ${firstName} — your take on onboarding is exactly what I need.`;
+  }
 
-        // Manager card
-        const card = document.getElementById('manager-card');
-        if (card && name) {
-          const loading = document.getElementById('manager-loading');
-          if (loading) loading.remove();
-          document.getElementById('manager-name').textContent = name;
-          document.getElementById('manager-role').textContent = role + (d['Site'] ? ' · ' + d['Site'] : '');
-          card.style.display = 'block';
-        }
+  const card = document.getElementById('manager-card');
+  if (card && name) {
+    const loading = document.getElementById('manager-loading');
+    if (loading) loading.remove();
+    document.getElementById('manager-name').textContent = name;
+    document.getElementById('manager-role').textContent = role + (d['Site'] ? ' · ' + d['Site'] : '');
+    card.style.display = 'block';
+  }
 
-        // Build per-hire cards using real names + fetch tenure via JSONP
-        if (reportNames.length > 0) {
-          const containerEl = document.getElementById('person-cards');
-          containerEl.innerHTML = '';
-          hireCount = reportNames.length;
+  if (reportNames.length > 0) {
+    const containerEl = document.getElementById('person-cards');
+    containerEl.innerHTML = '';
+    hireCount = reportNames.length;
 
-          reportNames.forEach((rName, i) => {
-            const hireCard = buildPersonCard(i + 1, rName);
-            containerEl.appendChild(hireCard);
+    reportNames.forEach((rName, i) => {
+      const hireCard = buildPersonCard(i + 1, rName);
+      containerEl.appendChild(hireCard);
+    });
+    const colors = ['#1a1a1a','#444','#666','#888','#aaa'];
+    containerEl.querySelectorAll('.person-card').forEach((c, i) => {
+      const av = c.querySelector('.person-avatar');
+      if (av) av.style.background = colors[Math.min(i,4)];
+      const del = c.querySelector('.delete-card-btn');
+      if (del) del.style.display = reportNames.length > 1 ? '' : 'none';
+    });
+
+    const addBtn = document.getElementById('add-person-btn');
+    if (addBtn) addBtn.textContent = '+ Add another hire not listed';
+
+    if (reportTokens.length > 0) {
+      const batchCbName = 'jsonpBatch_' + Date.now();
+      window[batchCbName] = function(bres) {
+        delete window[batchCbName];
+        if (bres.ok && bres.data) {
+          reportTokens.forEach((t, i) => {
+            const rData = bres.data[t];
+            if (!rData) return;
+            const tenure = calcTenure(rData['Hire Date']);
+            const hint = document.querySelector(`#person-cards .person-card[data-idx="${i}"] .hire-tenure-hint`);
+            if (hint && tenure) hint.textContent = `Joined ${tenure} ago`;
           });
-          renumberCards();
-
-          // Show/hide add button — hide if we know exact reports, keep as fallback
-          const addBtn = document.getElementById('add-person-btn');
-          if (addBtn) addBtn.textContent = '+ Add another hire not listed';
-
-          // Fetch ALL reports' data in ONE batch JSONP call (was N separate calls)
-          if (reportTokens.length > 0) {
-            const batchCbName = 'jsonpBatch_' + Date.now();
-            window[batchCbName] = function(bres) {
-              delete window[batchCbName];
-              if (bres.ok && bres.data) {
-                reportTokens.forEach((t, i) => {
-                  const rData = bres.data[t];
-                  if (!rData) return;
-                  const tenure = calcTenure(rData['Hire Date']);
-                  const hint = document.querySelector(`#person-cards .person-card[data-idx="${i}"] .hire-tenure-hint`);
-                  if (hint && tenure) hint.textContent = `Joined ${tenure} ago`;
-                });
-              }
-            };
-            const bs = document.createElement('script');
-            bs.src = BACKEND_URL + '?tokens=' + encodeURIComponent(reportTokens.join(',')) + '&callback=' + batchCbName + '&_=' + Date.now();
-            document.head.appendChild(bs);
-          }
         }
-      }
-  };
-  const _s = document.createElement('script');
-  _s.src = BACKEND_URL + '?token=' + TOKEN + '&type=manager&callback=' + _cbName + '&_=' + Date.now();
-  _s.onerror = function() { delete window[_cbName]; };
-  document.head.appendChild(_s);
+      };
+      const bs = document.createElement('script');
+      bs.src = BACKEND_URL + '?tokens=' + encodeURIComponent(reportTokens.join(',')) + '&callback=' + batchCbName + '&_=' + Date.now();
+      document.head.appendChild(bs);
+    }
+  }
+}
+
+// Use preloaded data if it already arrived — otherwise wait for it.
+if (TOKEN !== 'DEMO') {
+  if (window.__preloadDone) {
+    applyManagerData(window.__preloadData);
+  } else {
+    window.__onPreloadReady = applyManagerData;
+  }
 }
 
 function collectAnswers() {
