@@ -547,7 +547,7 @@ async function loadServerData() {
     return;
   }
   try {
-    const res = await fetch(`${API_URL}?token=${TOKEN}&type=joiner`, { redirect: 'follow' });
+    const res = await fetch(`${API_URL}?token=${TOKEN}&type=joiner`);
     const json = await res.json();
     if (json.ok && json.data) {
       applyPersonData(json.data);
@@ -556,7 +556,7 @@ async function loadServerData() {
     }
   } catch (err) {
     console.error('Fetch error:', err);
-    if (loadingEl) loadingEl.textContent = 'Error loading data. Check DevTools Console.';
+    if (loadingEl) loadingEl.textContent = 'Error loading data.';
   }
 }
 
