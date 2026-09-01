@@ -103,6 +103,21 @@
   .btn-submit { background: var(--pink); color: white; border: none; border-radius: var(--radius-sm); padding: 14px 32px; font-size: 15px; font-weight: 500; font-family: 'Inter', sans-serif; cursor: pointer; transition: opacity 0.15s; }
   .btn-submit:hover { opacity: 0.88; }
   @keyframes spin { to { transform: rotate(360deg); } }
+.pulse-loading {
+  text-align: center;
+  padding: 60px 20px;
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: #ff0055; /* הצבע הוורוד של למון */
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.4; transform: scale(0.98); }
+  50% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0.4; transform: scale(0.98); }
+}
+  
 </style>
 </head>
 <body>
