@@ -497,7 +497,7 @@ renderBlockers('general');
 updateProgress();
 
 // ── BACKEND CONFIG ────────────────────────────────────────────
-const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbwlwHoswdKtiIZdcPD17Gfde6iMEVXcAfVNBnR3MRTmMVy8f2uYcVegrlwkQj14eiI/exec';
+const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbwAr0Xe6jqqFdbQUQmRNjD_liFEQGzEgcnDcH6xiKP3DbWMPsqfDIIMYSaVKMEVBFA/exec';
 const urlParams = new URLSearchParams(window.location.search);
 const TOKEN = urlParams.get('token') || 'DEMO';
 
@@ -558,7 +558,7 @@ if (TOKEN !== 'DEMO') {
       }
   };
   const _s = document.createElement('script');
-  _s.src = BACKEND_URL + '?token=' + TOKEN + '&type=joiner&callback=' + _cbName;
+  _s.src = BACKEND_URL + '?token=' + TOKEN + '&type=joiner&callback=' + _cbName + '&_=' + Date.now();
   _s.onerror = function() { delete window[_cbName]; };
   document.head.appendChild(_s);
 }
