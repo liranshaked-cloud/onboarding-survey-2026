@@ -539,21 +539,24 @@ function applyPersonData(d) {
 }
 
 // JSONP פנייה מהירה באמצעות
-function loadServerData() {
+async function loadServerData() {
+  const loadingEl = document.getElementById('person-loading');
   if (!TOKEN) {
-    document.getElementById('person-loading').textContent = 'Error: No token provided in URL.';
+    if (loadingEl) loadingEl.textContent = 'Error: No token provided in URL.';
     return;
   }
-  window.__joinerCb = function(res) {
-    if (res && res.ok && res.data) {
-      applyPersonData(res.data);
+  try {
+    const res = await fetch(`${API_URL}?token=${TOKEN}&type=joiner`, { redirect: 'follow' });
+    const json = await res.json();
+    if (json.ok && json.data) {
+      applyPersonData(json.data);
     } else {
-      document.getElementById('person-loading').textContent = 'Error: Employee not found.';
+      if (loadingEl) loadingEl.textContent = 'Error: ' + (json.error || 'Employee not found.');
     }
-  };
-  const script = document.createElement('script');
-  script.src = `${API_URL}?token=${TOKEN}&type=joiner&callback=__joinerCb`;
-  document.head.appendChild(script);
+  } catch (err) {
+    console.error('Fetch error:', err);
+    if (loadingEl) loadingEl.textContent = 'Error loading data. Check DevTools Console.';
+  }
 }
 
 loadServerData();
