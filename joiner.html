@@ -105,10 +105,10 @@
 
     .pulse-loading {
       text-align: center;
-      padding: 60px 20px;
-      font-size: 1.25rem;
+      padding: 24px 20px;
+      font-size: 1.1rem;
       font-weight: 500;
-      color: #ff0055; /* הצבע הוורוד של למון */
+      color: #ff0055;
       animation: pulse 1.5s infinite ease-in-out;
     }
 
@@ -141,12 +141,12 @@
     <div style="background:var(--charcoal);border-radius:var(--radius);padding:32px;color:white;">
       <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:var(--pink);text-transform:uppercase;margin-bottom:14px;">Liran Shaked · L&amp;D Lead Tech Dev</div>
       <div id="personal-greeting" style="font-family:'Fraunces',serif;font-size:22px;font-weight:300;line-height:1.3;letter-spacing:-0.02em;margin-bottom:16px;">I joined Lemonade a few months ago to lead L&D — and onboarding is the first thing I'm working on.</div>
-      <div id="person-card" style="display:block;background:rgba(255,255,255,0.08);border-radius:8px;padding:14px 18px;margin-bottom:16px;font-size:13px;color:rgba(255,255,255,0.9);line-height:1.8;">
-        
-        <div id="person-loading" class="pulse-loading">
-          Loading your onboarding details... ⏳
-        </div>
-        
+      
+      <div id="person-loading" class="pulse-loading">
+        Loading your onboarding details... ⏳
+      </div>
+
+      <div id="person-card" style="display:none;background:rgba(255,255,255,0.08);border-radius:8px;padding:14px 18px;margin-bottom:16px;font-size:13px;color:rgba(255,255,255,0.9);line-height:1.8;">
         <div id="person-name" style="font-weight:600;font-size:15px;margin-bottom:4px;"></div>
         <div id="person-role" style="color:rgba(255,255,255,0.6);"></div>
         <div id="person-tenure" style="color:rgba(255,255,255,0.5);font-size:12px;margin-top:2px;"></div>
@@ -334,7 +334,6 @@
 
 <script>
 const API_URL = 'https://script.google.com/macros/s/AKfycbwyzHTZ6HUcCA6IqtlsuNc0GXVRYH7qZSsKKkwGoYqj2ehX_njmVCoiFkFgkaxXiNU/exec'; 
- 
 
 const urlParams = new URLSearchParams(window.location.search);
 const TOKEN = urlParams.get('token');
@@ -527,7 +526,7 @@ const ROLE_MAP = {
 
 function applyPersonData(d) {
   const loading = document.getElementById('person-loading');
-  if (loading) loading.style.display = 'none';
+  if (loading) loading.remove(); // הסרה מוחלטת של אלמנט הטעינה מה-DOM
 
   const name = d.name || '';
   const role = d.role || '';
@@ -543,7 +542,7 @@ function applyPersonData(d) {
     if (document.getElementById('person-name')) document.getElementById('person-name').textContent = name;
     if (document.getElementById('person-role')) document.getElementById('person-role').textContent = role;
     if (document.getElementById('person-tenure')) document.getElementById('person-tenure').textContent = d.displayTenure || '';
-    card.style.display = 'block';
+    card.style.display = 'block'; // הצגת הכרטיס המלא
   }
 
   const roleKey = ROLE_MAP[role] || 'general';
@@ -556,7 +555,6 @@ function applyPersonData(d) {
   }
 }
 
-// קריאה מאובטחת ללא מטמון - מבטיחה שכל אחד יראה את המידע הכי עדכני!
 async function loadServerData() {
   const loadingEl = document.getElementById('person-loading');
   if (!TOKEN) {
