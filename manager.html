@@ -402,7 +402,6 @@ function applyManagerData(d, reportsData) {
   if (card) {
     if (document.getElementById('manager-name')) document.getElementById('manager-name').textContent = name;
     
-    // הצגת התפקיד, המיקום והוותק של המנהל/ת
     let managerMeta = role + (d.site ? ' · ' + d.site : '');
     if (d.displayTenure) {
       managerMeta += ' · ' + d.displayTenure;
@@ -412,9 +411,10 @@ function applyManagerData(d, reportsData) {
     card.style.display = 'block';
   }
 
+  const containerEl = document.getElementById('person-cards');
+  containerEl.innerHTML = '';
+
   if (reportsData && Object.keys(reportsData).length > 0) {
-    const containerEl = document.getElementById('person-cards');
-    containerEl.innerHTML = '';
     const reportTokens = Object.keys(reportsData);
     hireCount = reportTokens.length;
 
@@ -433,6 +433,10 @@ function applyManagerData(d, reportsData) {
 
     const addBtn = document.getElementById('add-person-btn');
     if (addBtn) addBtn.textContent = '+ Add another hire not listed';
+  } else {
+    hireCount = 1;
+    containerEl.appendChild(buildPersonCard(1));
+    renumberCards();
   }
 }
 
