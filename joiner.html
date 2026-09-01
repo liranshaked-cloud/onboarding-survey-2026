@@ -2,26 +2,6 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<script>
-// ── EARLY PRELOAD — fires before CSS/fonts load, so Apps Script cold-start
-// happens in parallel with page render, not after it.
-window.__preloadData = null;
-window.__preloadDone = false;
-(function() {
-  const params = new URLSearchParams(window.location.search);
-  const token = params.get('token');
-  if (!token || token === 'DEMO') { window.__preloadDone = true; return; }
-  const BACKEND = 'https://script.google.com/macros/s/AKfycbyZlazoNMigocSkm36aTzlfiLBpl6ntPLBqvt3qgHv22fn3jCpAyJGtLvXA-vlEzGw/exec';
-  window.__preloadCb = function(res) {
-    window.__preloadData = res;
-    window.__preloadDone = true;
-    if (window.__onPreloadReady) window.__onPreloadReady(res);
-  };
-  const s = document.createElement('script');
-  s.src = BACKEND + '?token=' + token + '&type=joiner&callback=__preloadCb&_=' + Date.now();
-  document.head.appendChild(s);
-})();
-</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Onboarding Survey — Joiner</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -91,7 +71,6 @@ window.__preloadDone = false;
 
   .info-note { background: var(--pink-light); border-left: 3px solid var(--pink); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; padding: 12px 16px; font-size: 13px; color: var(--mid); margin-bottom: 16px; line-height: 1.5; }
 
-  /* Sessions */
   .session-group-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--charcoal); font-weight: 500; margin-bottom: 4px; }
   .session-group-sub { font-size: 11px; color: var(--light); margin-bottom: 12px; }
   .session-header-row { display: grid; grid-template-columns: 1fr 150px 130px; gap: 12px; padding: 4px 14px; margin-bottom: 4px; }
@@ -114,7 +93,6 @@ window.__preloadDone = false;
   .role-prompt strong { color: white; }
   .role-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--charcoal); color: white; font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 5px 12px; border-radius: 20px; margin-bottom: 16px; }
 
-  /* Buddy follow-up */
   .followup { display: none; margin-top: 14px; padding: 16px; background: var(--pink-light); border-radius: var(--radius-sm); border: 1.5px solid var(--pink); }
   .followup.open { display: block; }
   .followup-label { font-size: 13px; font-weight: 500; color: var(--charcoal); margin-bottom: 10px; }
@@ -338,6 +316,11 @@ window.__preloadDone = false;
 </div>
 
 <script>
+const API_URL = 'https://script.google.com/macros/s/AKfycbzWcfwBEhCDQ9tgLh4EnfQ_1-03BflyApyaOFjeFNKmaEc8W62oVy6H71EC4VxMUAo/exec'; 
+
+const urlParams = new URLSearchParams(window.location.search);
+const TOKEN = urlParams.get('token');
+
 const SECTIONS = [
   { id:'section-b', name:'Ramp milestones' },
   { id:'section-c', name:'Sessions' },
@@ -404,7 +387,6 @@ const F2F = [
 
 let selectedRole = null;
 
-// Progress
 function updateProgress() {
   const scrollY = window.scrollY;
   const docH = document.documentElement.scrollHeight - window.innerHeight;
@@ -418,7 +400,6 @@ function updateProgress() {
 }
 window.addEventListener('scroll', updateProgress, { passive: true });
 
-// Session card
 function buildCard(session) {
   const card = document.createElement('div');
   card.className = 'session-card';
@@ -458,8 +439,8 @@ function renderSessions(role) {
   ops.forEach(s => og.appendChild(buildCard(s)));
   fyis.forEach(s => fg.appendChild(buildCard(s)));
   f2fs.forEach(s => f2fg.appendChild(buildCard(s)));
-  document.getElementById('role-badge').textContent = '📋 ' + ROLE_LABELS[role];
-  document.getElementById('op-sub').textContent = ops.length + ' sessions for ' + ROLE_LABELS[role];
+  document.getElementById('role-badge').textContent = '📋 ' + (ROLE_LABELS[role] || role);
+  document.getElementById('op-sub').textContent = ops.length + ' sessions for ' + (ROLE_LABELS[role] || role);
   document.getElementById('role-prompt').style.display = 'none';
   document.getElementById('sessions-content').style.display = 'block';
   const showF2F = f2fs.length > 0;
@@ -483,7 +464,6 @@ function renderBlockers(role) {
   list.appendChild(otherWrap);
 }
 
-// Buddy follow-up
 document.getElementById('buddy-selector').querySelectorAll('.choice-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.getElementById('buddy-selector').querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected'));
@@ -495,7 +475,6 @@ document.getElementById('buddy-selector').querySelectorAll('.choice-btn').forEac
   });
 });
 
-// Time pickers
 document.querySelectorAll('.time-unit-toggle').forEach(toggle => {
   toggle.querySelectorAll('.time-unit-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -506,34 +485,18 @@ document.querySelectorAll('.time-unit-toggle').forEach(toggle => {
   });
 });
 
-// Generic choice rows
 document.querySelectorAll('.input-row:not(#buddy-selector)').forEach(row => {
   row.querySelectorAll('.choice-btn').forEach(btn => {
     btn.addEventListener('click', () => { row.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected')); btn.classList.add('selected'); });
   });
 });
 
-// Question focus
 document.querySelectorAll('.question').forEach(q => {
   q.addEventListener('click', () => { document.querySelectorAll('.question').forEach(qq => qq.classList.remove('focused')); q.classList.add('focused'); });
 });
 
 renderBlockers('general');
 updateProgress();
-
-// ── BACKEND CONFIG ────────────────────────────────────────────
-const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbyZlazoNMigocSkm36aTzlfiLBpl6ntPLBqvt3qgHv22fn3jCpAyJGtLvXA-vlEzGw/exec';
-const urlParams = new URLSearchParams(window.location.search);
-const TOKEN = urlParams.get('token') || 'DEMO';
-
-function calcTenure(hireDateStr) {
-  if (!hireDateStr) return null;
-  const hire = new Date(hireDateStr);
-  const now = new Date();
-  const months = (now.getFullYear() - hire.getFullYear()) * 12 + (now.getMonth() - hire.getMonth());
-  if (months < 2) return Math.ceil((now - hire) / (1000*60*60*24*7)) + ' weeks';
-  return months + ' months';
-}
 
 const ROLE_MAP = {
   'Product Manager': 'pm', 'Developer': 'dev', 'Data Analyst': 'da',
@@ -544,14 +507,13 @@ const ROLE_MAP = {
   'Assoc. Manager, SW Engineering': 'tl', 'Sr. Software Engineer': 'dev'
 };
 
-// ── APPLY DATA (from preload or fresh fetch) ──────────────────
-function applyPersonData(res) {
-  if (!(res && res.ok && res.data)) return;
-  const d = res.data;
-  const name = d['Full Name'] || '';
-  const role = d['Role'] || '';
-  const tenure = calcTenure(d['Hire Date']);
-  const firstName = name.split(' ')[0];
+function applyPersonData(d) {
+  const loading = document.getElementById('person-loading');
+  if (loading) loading.style.display = 'none';
+
+  const name = d.name || '';
+  const role = d.role || '';
+  const firstName = name ? name.split(' ')[0] : '';
 
   const greeting = document.getElementById('personal-greeting');
   if (greeting && firstName) {
@@ -559,16 +521,14 @@ function applyPersonData(res) {
   }
 
   const card = document.getElementById('person-card');
-  if (card && name) {
-    const loading = document.getElementById('person-loading');
-    if (loading) loading.remove();
-    document.getElementById('person-name').textContent = name;
-    document.getElementById('person-role').textContent = role;
-    document.getElementById('person-tenure').textContent = tenure ? `${tenure} at Lemonade` : '';
+  if (card) {
+    if (document.getElementById('person-name')) document.getElementById('person-name').textContent = name;
+    if (document.getElementById('person-role')) document.getElementById('person-role').textContent = role;
+    if (document.getElementById('person-tenure')) document.getElementById('person-tenure').textContent = d.displayTenure || '';
     card.style.display = 'block';
   }
 
-  const roleKey = ROLE_MAP[role];
+  const roleKey = ROLE_MAP[role] || 'general';
   if (roleKey) {
     selectedRole = roleKey;
     renderSessions(roleKey);
@@ -578,32 +538,36 @@ function applyPersonData(res) {
   }
 }
 
-// Use preloaded data if it already arrived (started loading in <head>,
-// before CSS/fonts) — otherwise wait for it. No second network call ever fires.
-if (TOKEN !== 'DEMO') {
-  if (window.__preloadDone) {
-    applyPersonData(window.__preloadData);
-  } else {
-    window.__onPreloadReady = applyPersonData;
+// JSONP פנייה מהירה באמצעות
+function loadServerData() {
+  if (!TOKEN) {
+    document.getElementById('person-loading').textContent = 'Error: No token provided in URL.';
+    return;
   }
+  window.__joinerCb = function(res) {
+    if (res && res.ok && res.data) {
+      applyPersonData(res.data);
+    } else {
+      document.getElementById('person-loading').textContent = 'Error: Employee not found.';
+    }
+  };
+  const script = document.createElement('script');
+  script.src = `${API_URL}?token=${TOKEN}&type=joiner&callback=__joinerCb`;
+  document.head.appendChild(script);
 }
 
-// ── COLLECT ALL ANSWERS ───────────────────────────────────────
+loadServerData();
+
 function collectAnswers() {
   const answers = {};
+  answers.role = selectedRole ? (ROLE_LABELS[selectedRole] || selectedRole) : '';
 
-  // Role & site
-  const roleBtn = null;
-  answers.role = selectedRole ? ROLE_LABELS[selectedRole] : '';
-
-  // Ramp questions
   document.querySelectorAll('.time-number').forEach((inp, i) => {
     const toggle = inp.closest('.time-picker')?.querySelector('.time-unit-btn.active');
     const unit = toggle ? toggle.dataset.unit : 'weeks';
     answers['ramp_' + (i+1)] = { value: inp.value, unit };
   });
 
-  // Sessions
   const sessions = {};
   document.querySelectorAll('.session-card').forEach(card => {
     const name = card.querySelector('.session-name')?.textContent.trim();
@@ -614,19 +578,16 @@ function collectAnswers() {
   });
   answers.sessions = sessions;
 
-  // Blockers
   const blockers = [];
   document.querySelectorAll('#blockers-list .checkbox-item.checked .checkbox-label')
     .forEach(el => blockers.push(el.textContent.trim()));
   answers.blockers = blockers;
 
-  // Buddy
   const buddyBtn = document.querySelector('#buddy-selector .selected');
   answers.buddy = buddyBtn ? buddyBtn.textContent.trim() : '';
   answers.buddy_note_used = document.querySelector('#followup-used textarea')?.value || '';
   answers.buddy_note_not = document.querySelector('#followup-not textarea')?.value || '';
 
-  // Open questions
   document.querySelectorAll('#section-e textarea').forEach((ta, i) => {
     answers['open_' + (i+1)] = ta.value;
   });
@@ -634,7 +595,6 @@ function collectAnswers() {
   return answers;
 }
 
-// ── SUBMIT ────────────────────────────────────────────────────
 document.querySelector('.btn-submit').addEventListener('click', async function() {
   this.textContent = 'Saving...';
   this.disabled = true;
@@ -642,19 +602,19 @@ document.querySelector('.btn-submit').addEventListener('click', async function()
   const payload = {
     token: TOKEN,
     type: 'joiner',
-    role: selectedRole ? ROLE_LABELS[selectedRole] : '',
-    site: '', // collected in answers
+    role: selectedRole ? (ROLE_LABELS[selectedRole] || selectedRole) : '',
+    site: '',
     answers: collectAnswers()
   };
 
   try {
-    await fetch(BACKEND_URL, {
+    await fetch(API_URL, {
       method: 'POST',
       mode: 'no-cors',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
-    // no-cors means we can't read response — assume success
+
     document.querySelector('.survey-wrap').innerHTML = `
       <div style="text-align:center;padding:80px 24px;max-width:480px;margin:0 auto;">
         <div style="font-size:48px;margin-bottom:24px;">🎉</div>
