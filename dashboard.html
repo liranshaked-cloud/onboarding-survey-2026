@@ -1,14 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Onboarding Executive Dashboard 2026</title>
+  <base target="_top">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Inter', sans-serif; background: #0f172a; color: #f8fafc; padding: 24px; }
+    body { font-family: 'Inter', sans-serif; background: #0f172a; color: #f8fafc; padding: 24px; margin: 0; }
     .card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; }
     .loader { border: 4px solid #334155; border-top: 4px solid #ff0083; border-radius: 50%; width: 48px; height: 48px; animation: spin 1s linear infinite; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -16,13 +14,13 @@
 </head>
 <body>
 
-  <!-- Loading Overlay -->
-  <div id="loader" class="fixed inset-0 bg-slate-900/90 z-50 flex flex-col items-center justify-center p-6 text-center">
-    <div id="spinner" class="loader mb-4"></div>
-    <div id="loader-status" class="text-slate-300 font-medium text-lg">Loading Analytics...</div>
+  <!-- Loading Screen -->
+  <div id="loader" class="fixed inset-0 bg-slate-900/90 z-50 flex flex-col items-center justify-center">
+    <div class="loader mb-4"></div>
+    <div class="text-slate-300 font-medium text-lg">Fetching Live Analytics...</div>
   </div>
 
-  <div class="max-w-7xl mx-auto space-y-6">
+  <div class="max-w-7xl mx-auto space-y-6 pb-12">
     <!-- Top Bar -->
     <div class="card p-6 flex flex-col md:flex-row justify-between items-center gap-4">
       <div>
@@ -107,29 +105,17 @@
   </div>
 
 <script>
-  const API_URL = 'https://script.google.com/macros/s/AKfycbwyzHTZ6HUcCA6IqtlsuNc0GXVRYH7qZSsKKkwGoYqj2ehX_njmVCoiFkFgkaxXiNU/exec?type=analytics';
   let rawMaster = [], rawSessions = [], currentDomain = 'All', chartInstance = null;
 
-  async function loadData() {
-    const statusEl = document.getElementById('loader-status');
-    const spinnerEl = document.getElementById('spinner');
-    try {
-      const res = await fetch(API_URL);
-      const json = await res.json();
-      if(json && json.ok) {
-        rawMaster = parse2D(json.master);
-        rawSessions = parse2D(json.sessions);
-        document.getElementById('loader').classList.add('hidden');
-        render();
-      } else {
-        throw new Error('API returned unsuccessful status.');
-      }
-    } catch(e) {
-      console.error('Fetch error:', e);
-      spinnerEl.classList.add('hidden');
-      statusEl.innerHTML = '<span class="text-rose-500 font-bold">⚠️ Connection Error</span><br><span class="text-sm text-slate-400 mt-2 block">Make sure Apps Script Web App permissions are set to "Anyone".</span>';
+  // טעינה פנימית מגוגל שיטס ב-0.2 שניות (ללא FETCH וללא CORS!)
+  google.script.run.withSuccessHandler(function(data) {
+    if(data && data.master) {
+      rawMaster = parse2D(data.master);
+      rawSessions = parse2D(data.sessions);
+      document.getElementById('loader').classList.add('hidden');
+      render();
     }
-  }
+  }).getDashboardDataForUI();
 
   function parse2D(arr) {
     if(!arr || arr.length < 2) return [];
@@ -242,8 +228,6 @@
       if(qM && qM.length > 2) ulM.innerHTML += `<li class="border-b border-slate-800 pb-2">"${qM}"</li>`;
     });
   }
-
-  loadData();
 </script>
 </body>
 </html>
