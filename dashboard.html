@@ -20,10 +20,10 @@
   <!-- Screen Loader -->
   <div id="loader" class="fixed inset-0 bg-[#0b0f19] z-50 flex flex-col items-center justify-center">
     <div class="loader mb-4"></div>
-    <div class="text-slate-300 font-semibold text-xl tracking-wide">Generating Executive Insights...</div>
+    <div class="text-slate-300 font-semibold text-xl tracking-wide">Crunching Live Analytics...</div>
   </div>
 
-  <div class="max-w-[1600px] mx-auto space-y-8">
+  <div class="max-w-[1600px] mx-auto space-y-8 pb-12">
     
     <!-- Header -->
     <div class="card p-8 flex flex-col md:flex-row justify-between items-center gap-6 border-l-8 border-l-[#ff0083]">
@@ -43,9 +43,8 @@
     <!-- KPI Cards Grid -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
       <div class="card p-6 flex flex-col justify-between">
-        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Completed Joiners</span>
+        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Completed Responses</span>
         <div class="text-5xl font-black text-emerald-400 mt-3" id="kpi-joiners">--</div>
-        <span class="text-xs text-slate-500 mt-2">Active survey respondents</span>
       </div>
       <div class="card p-6 flex flex-col justify-between">
         <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Avg. Time to Full Independence</span>
@@ -104,8 +103,8 @@
     <!-- Bottom Section: Qualitative Voice of the Joiners -->
     <div class="card p-8">
       <div class="mb-6">
-        <h2 class="text-xl font-bold text-white">Voice of the Joiners (Qualitative Feedback)</h2>
-        <p class="text-xs text-slate-400 mt-1">Raw insights extracted directly from survey open-text answers</p>
+        <h2 class="text-xl font-bold text-white">Voice of the Joiners & Managers</h2>
+        <p class="text-xs text-slate-400 mt-1">Raw qualitative insights extracted directly from survey open-text answers</p>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div class="bg-slate-900/60 p-5 rounded-xl border border-slate-800">
@@ -113,21 +112,21 @@
             <span> Remove / Ramp Faster</span>
             <span>✂️</span>
           </h3>
-          <ul id="qual-remove" class="text-xs text-slate-300 space-y-3 max-h-[250px] overflow-y-auto pr-2"></ul>
+          <ul id="qual-remove" class="text-xs text-slate-300 space-y-3 max-h-[300px] overflow-y-auto pr-2"></ul>
         </div>
         <div class="bg-slate-900/60 p-5 rounded-xl border border-slate-800">
           <h3 class="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-4 pb-2 border-b border-emerald-500/20 flex items-center justify-between">
             <span> What Worked Well</span>
             <span>🙌</span>
           </h3>
-          <ul id="qual-keep" class="text-xs text-slate-300 space-y-3 max-h-[250px] overflow-y-auto pr-2"></ul>
+          <ul id="qual-keep" class="text-xs text-slate-300 space-y-3 max-h-[300px] overflow-y-auto pr-2"></ul>
         </div>
         <div class="bg-slate-900/60 p-5 rounded-xl border border-slate-800">
           <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wider mb-4 pb-2 border-b border-sky-500/20 flex items-center justify-between">
             <span> Missing / Suggestions</span>
             <span>💡</span>
           </h3>
-          <ul id="qual-missing" class="text-xs text-slate-300 space-y-3 max-h-[250px] overflow-y-auto pr-2"></ul>
+          <ul id="qual-missing" class="text-xs text-slate-300 space-y-3 max-h-[300px] overflow-y-auto pr-2"></ul>
         </div>
       </div>
     </div>
@@ -172,14 +171,23 @@
   }
 
   function render() {
-    const joiners = rawMaster.filter(r => {
-      const typeVal = String(getVal(r, 'type')).toLowerCase();
+    // 1. סינון לפי המחלקה שנבחרה
+    const filteredMaster = rawMaster.filter(r => {
       const domainVal = String(getVal(r, 'domain')).toLowerCase();
-      return (typeVal.includes('onboarder') || typeVal.includes('joiner')) && (currentDomain === 'All' || domainVal.includes(currentDomain.toLowerCase()));
+      return currentDomain === 'All' || domainVal.includes(currentDomain.toLowerCase());
     });
 
-    document.getElementById('kpi-joiners').textContent = joiners.length;
+    const joiners = filteredMaster.filter(r => String(getVal(r, 'type')).toLowerCase().includes('onboarder'));
+    const managers = filteredMaster.filter(r => String(getVal(r, 'type')).toLowerCase().includes('manager'));
+    const totalCount = filteredMaster.length; 
 
+    // 2. הצגת סך הכל משיבים (כולל פירוט עובדים/מנהלים)
+    document.getElementById('kpi-joiners').innerHTML = `
+      ${totalCount} 
+      <span class="text-sm font-semibold text-slate-500 block mt-2">${joiners.length} Joiners · ${managers.length} Managers</span>
+    `;
+
+    // 3. חישוב זמן Ramp וחסמים (רק עבור עובדים חדשים)
     let rampSum = 0, rampCount = 0, blockersMap = {};
     joiners.forEach(j => {
       const r2 = String(getVal(j, 'ramp 2')).toLowerCase();
@@ -197,9 +205,10 @@
     for(let b in blockersMap) { if(blockersMap[b] > maxB) { maxB = blockersMap[b]; topB = b; } }
     document.getElementById('kpi-blocker').textContent = topB;
 
+    // 4. רינדור רכיבים פנימיים
     renderMatrix();
     renderChart(joiners);
-    renderQualitative(joiners);
+    renderQualitative(filteredMaster); // מעביר את כולם (עובדים + מנהלים) לתשובות המילוליות
   }
 
   function renderMatrix() {
@@ -263,12 +272,12 @@
     });
   }
 
-  function renderQualitative(joiners) {
+  function renderQualitative(rows) {
     const ulR = document.getElementById('qual-remove'), ulK = document.getElementById('qual-keep'), ulM = document.getElementById('qual-missing');
     ulR.innerHTML = ''; ulK.innerHTML = ''; ulM.innerHTML = '';
 
-    joiners.forEach(j => {
-      const qR = getVal(j, 'remove'), qK = getVal(j, 'keep'), qM = getVal(j, 'missing');
+    rows.forEach(r => {
+      const qR = getVal(r, 'remove'), qK = getVal(r, 'keep'), qM = getVal(r, 'missing');
       if(qR && qR.length > 2) ulR.innerHTML += `<li class="bg-slate-800/60 p-3 rounded-lg border border-slate-700/50 leading-relaxed font-normal">"${qR}"</li>`;
       if(qK && qK.length > 2) ulK.innerHTML += `<li class="bg-slate-800/60 p-3 rounded-lg border border-slate-700/50 leading-relaxed font-normal">"${qK}"</li>`;
       if(qM && qM.length > 2) ulM.innerHTML += `<li class="bg-slate-800/60 p-3 rounded-lg border border-slate-700/50 leading-relaxed font-normal">"${qM}"</li>`;
