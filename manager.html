@@ -274,7 +274,6 @@
 const API_URL = 'https://script.google.com/macros/s/AKfycbwyzHTZ6HUcCA6IqtlsuNc0GXVRYH7qZSsKKkwGoYqj2ehX_njmVCoiFkFgkaxXiNU/exec'; 
 
 const urlParams = new URLSearchParams(window.location.search);
-// תומך גם ב-Hash (#), גם ב-token= וגם ב-id= לגיבוי מלא
 const TOKEN = window.location.hash.replace('#', '') || urlParams.get('token') || urlParams.get('id');
 
 const SECTIONS = [
@@ -374,6 +373,31 @@ function buildPersonCard(n, realName) {
     </div>`;
   initTimePickers(card);
   initChoiceRows(card);
+
+  // Click handler for Not Yet buttons in Manager Survey cards
+  card.querySelectorAll('.not-yet-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const parentBlock = btn.closest('div');
+      const input = parentBlock.querySelector('.time-number');
+      const isSelected = btn.classList.toggle('selected');
+
+      if (isSelected) {
+        btn.style.borderColor = 'var(--pink)';
+        btn.style.background = 'var(--pink-light)';
+        btn.style.color = 'var(--pink)';
+        btn.style.fontWeight = '600';
+        if (input) { input.value = ''; input.disabled = true; }
+      } else {
+        btn.style.borderColor = 'var(--border)';
+        btn.style.background = 'none';
+        btn.style.color = 'var(--light)';
+        btn.style.fontWeight = 'normal';
+        if (input) input.disabled = false;
+      }
+    });
+  });
+
   card.querySelector('.delete-card-btn').addEventListener('click', () => {
     card.remove();
     hireCount = document.querySelectorAll('#person-cards .person-card').length;
@@ -456,11 +480,9 @@ function applyManagerData(d, reportsData) {
   }
 }
 
-// פונקציית שחזור תשובות קודמות למנהל
 function populateManagerAnswers(answers) {
   if (!answers) return;
 
-  // 1. Hires Cards
   if (Array.isArray(answers.hires)) {
     const cards = document.querySelectorAll('#person-cards .person-card');
     answers.hires.forEach((hData, i) => {
@@ -471,20 +493,40 @@ function populateManagerAnswers(answers) {
             if (btn.textContent.trim() === hData.joined) btn.click();
           });
         }
-        const timeNums = card.querySelectorAll('.time-number');
-        const pickers = card.querySelectorAll('.time-picker');
-        
+        const blocks = card.querySelectorAll('.person-card-body > div');
+
         if (hData.weeks_independent) {
-          if (timeNums[0] && hData.weeks_independent.value !== undefined) timeNums[0].value = hData.weeks_independent.value;
-          if (pickers[0] && hData.weeks_independent.unit) {
-            const btn = pickers[0].querySelector(`.time-unit-btn[data-unit="${hData.weeks_independent.unit}"]`);
+          const indBlock = blocks[1];
+          const notYetBtn = indBlock?.querySelector('.not-yet-btn');
+          const numInput = indBlock?.querySelector('.time-number');
+          const picker = indBlock?.querySelector('.time-picker');
+
+          if (hData.weeks_independent.value === 'Not yet') {
+            if (notYetBtn) notYetBtn.click();
+          } else if (numInput && hData.weeks_independent.value !== undefined) {
+            numInput.value = hData.weeks_independent.value;
+          }
+
+          if (picker && hData.weeks_independent.unit) {
+            const btn = picker.querySelector(`.time-unit-btn[data-unit="${hData.weeks_independent.unit}"]`);
             if (btn) btn.click();
           }
         }
+
         if (hData.weeks_review_peer) {
-          if (timeNums[1] && hData.weeks_review_peer.value !== undefined) timeNums[1].value = hData.weeks_review_peer.value;
-          if (pickers[1] && hData.weeks_review_peer.unit) {
-            const btn = pickers[1].querySelector(`.time-unit-btn[data-unit="${hData.weeks_review_peer.unit}"]`);
+          const revBlock = blocks[2];
+          const notYetBtn = revBlock?.querySelector('.not-yet-btn');
+          const numInput = revBlock?.querySelector('.time-number');
+          const picker = revBlock?.querySelector('.time-picker');
+
+          if (hData.weeks_review_peer.value === 'Not yet') {
+            if (notYetBtn) notYetBtn.click();
+          } else if (numInput && hData.weeks_review_peer.value !== undefined) {
+            numInput.value = hData.weeks_review_peer.value;
+          }
+
+          if (picker && hData.weeks_review_peer.unit) {
+            const btn = picker.querySelector(`.time-unit-btn[data-unit="${hData.weeks_review_peer.unit}"]`);
             if (btn) btn.click();
           }
         }
@@ -492,12 +534,10 @@ function populateManagerAnswers(answers) {
     });
   }
 
-  // 2. Cost Selects
   document.querySelectorAll('.cost-select').forEach((sel, i) => {
     if (answers['cost_' + i]) sel.value = answers['cost_' + i];
   });
 
-  // 3. Built Yourself Checkboxes
   if (Array.isArray(answers.built_yourself)) {
     document.querySelectorAll('.checkbox-item').forEach(item => {
       const label = item.querySelector('.checkbox-label')?.textContent.trim();
@@ -507,7 +547,6 @@ function populateManagerAnswers(answers) {
     });
   }
 
-  // 4. Open Questions Textareas
   document.querySelectorAll('textarea').forEach((ta, i) => {
     if (answers['open_' + (i+1)]) {
       ta.value = answers['open_' + (i+1)];
@@ -545,13 +584,29 @@ function collectAnswers() {
   const hires = [];
   document.querySelectorAll('.person-card').forEach((card, i) => {
     const joinBtn = card.querySelector('.input-row .selected');
-    const timeNums = card.querySelectorAll('.time-number');
-    const timeUnits = card.querySelectorAll('.time-unit-btn.active');
+    const blocks = card.querySelectorAll('.person-card-body > div');
+
+    const indBlock = blocks[1];
+    const indNotYet = indBlock?.querySelector('.not-yet-btn.selected');
+    const indNum = indBlock?.querySelector('.time-number');
+    const indUnit = indBlock?.querySelector('.time-unit-btn.active');
+
+    const revBlock = blocks[2];
+    const revNotYet = revBlock?.querySelector('.not-yet-btn.selected');
+    const revNum = revBlock?.querySelector('.time-number');
+    const revUnit = revBlock?.querySelector('.time-unit-btn.active');
+
     hires.push({
       hire_num: i + 1,
       joined: joinBtn ? joinBtn.textContent.trim() : '',
-      weeks_independent: { value: timeNums[0]?.value, unit: timeUnits[0]?.dataset.unit },
-      weeks_review_peer: { value: timeNums[1]?.value, unit: timeUnits[1]?.dataset.unit },
+      weeks_independent: {
+        value: indNotYet ? 'Not yet' : (indNum ? indNum.value : ''),
+        unit: indUnit ? indUnit.dataset.unit : 'weeks'
+      },
+      weeks_review_peer: {
+        value: revNotYet ? 'Not yet' : (revNum ? revNum.value : ''),
+        unit: revUnit ? revUnit.dataset.unit : 'weeks'
+      },
     });
   });
   answers.hires = hires;
