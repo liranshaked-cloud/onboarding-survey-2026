@@ -4,110 +4,139 @@
   <base target="_top">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Inter', sans-serif; background: #0f172a; color: #f8fafc; padding: 24px; margin: 0; }
-    .card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; }
-    .loader { border: 4px solid #334155; border-top: 4px solid #ff0083; border-radius: 50%; width: 48px; height: 48px; animation: spin 1s linear infinite; }
+    body { font-family: 'Inter', sans-serif; background: #0b0f19; color: #f1f5f9; padding: 32px; margin: 0; min-height: 100vh; }
+    .card { background: #1e293b; border: 1px solid #334155; border-radius: 16px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3); }
+    .loader { border: 5px solid #334155; border-top: 5px solid #ff0083; border-radius: 50%; width: 56px; height: 56px; animation: spin 0.8s linear infinite; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #0f172a; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
   </style>
 </head>
 <body>
 
-  <!-- Loading Screen -->
-  <div id="loader" class="fixed inset-0 bg-slate-900/90 z-50 flex flex-col items-center justify-center">
+  <!-- Screen Loader -->
+  <div id="loader" class="fixed inset-0 bg-[#0b0f19] z-50 flex flex-col items-center justify-center">
     <div class="loader mb-4"></div>
-    <div class="text-slate-300 font-medium text-lg">Fetching Live Analytics...</div>
+    <div class="text-slate-300 font-semibold text-xl tracking-wide">Generating Executive Insights...</div>
   </div>
 
-  <div class="max-w-7xl mx-auto space-y-6 pb-12">
-    <!-- Top Bar -->
-    <div class="card p-6 flex flex-col md:flex-row justify-between items-center gap-4">
+  <div class="max-w-[1600px] mx-auto space-y-8">
+    
+    <!-- Header -->
+    <div class="card p-8 flex flex-col md:flex-row justify-between items-center gap-6 border-l-8 border-l-[#ff0083]">
       <div>
-        <h1 class="text-2xl font-bold text-white flex items-center gap-2">🚀 Onboarding Strategic Dashboard</h1>
-        <p class="text-sm text-slate-400 mt-1">Real-time analysis from Master Analytics & Session Databases</p>
+        <h1 class="text-3xl font-extrabold text-white tracking-tight flex items-center gap-3">
+          🚀 Onboarding Strategic Dashboard
+        </h1>
+        <p class="text-base text-slate-400 mt-2">Executive Overview & Cross-Referenced Survey Analytics</p>
       </div>
-      <div class="flex gap-2">
-        <button onclick="filterDomain('All')" id="btn-All" class="filter-btn px-5 py-2 text-sm bg-[#ff0083] text-white rounded-lg font-semibold shadow">All Domains</button>
-        <button onclick="filterDomain('R&D')" id="btn-RnD" class="filter-btn px-5 py-2 text-sm bg-slate-800 text-slate-300 rounded-lg font-semibold hover:bg-slate-700">R&D / Dev</button>
-        <button onclick="filterDomain('Product')" id="btn-Product" class="filter-btn px-5 py-2 text-sm bg-slate-800 text-slate-300 rounded-lg font-semibold hover:bg-slate-700">Product</button>
+      <div class="flex gap-3">
+        <button onclick="filterDomain('All')" id="btn-All" class="filter-btn px-6 py-3 text-sm bg-[#ff0083] text-white rounded-xl font-bold shadow-lg transition-all transform hover:scale-105">All Domains</button>
+        <button onclick="filterDomain('R&D')" id="btn-RnD" class="filter-btn px-6 py-3 text-sm bg-slate-800 text-slate-300 hover:text-white rounded-xl font-bold hover:bg-slate-700 transition-all">R&D / Dev</button>
+        <button onclick="filterDomain('Product')" id="btn-Product" class="filter-btn px-6 py-3 text-sm bg-slate-800 text-slate-300 hover:text-white rounded-xl font-bold hover:bg-slate-700 transition-all">Product</button>
       </div>
     </div>
 
-    <!-- KPI Row -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-      <div class="card p-5">
+    <!-- KPI Cards Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="card p-6 flex flex-col justify-between">
         <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Completed Joiners</span>
-        <div class="text-3xl font-extrabold text-emerald-400 mt-2" id="kpi-joiners">--</div>
+        <div class="text-5xl font-black text-emerald-400 mt-3" id="kpi-joiners">--</div>
+        <span class="text-xs text-slate-500 mt-2">Active survey respondents</span>
       </div>
-      <div class="card p-5">
-        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Avg. Time to Independence</span>
-        <div class="text-3xl font-extrabold text-amber-400 mt-2"><span id="kpi-ramp">--</span> <span class="text-sm font-normal text-slate-400">weeks</span></div>
+      <div class="card p-6 flex flex-col justify-between">
+        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Avg. Time to Full Independence</span>
+        <div class="text-5xl font-black text-amber-400 mt-3"><span id="kpi-ramp">--</span> <span class="text-xl font-medium text-slate-400">weeks</span></div>
+        <span class="text-xs text-slate-500 mt-2">Target benchmark: < 6 weeks</span>
       </div>
-      <div class="card p-5 md:col-span-2">
+      <div class="card p-6 flex flex-col justify-between">
         <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Top Reported Friction / Blocker</span>
-        <div class="text-base font-semibold text-rose-400 mt-2 truncate" id="kpi-blocker">--</div>
+        <div class="text-lg font-bold text-rose-400 mt-3 leading-snug" id="kpi-blocker">--</div>
+        <span class="text-xs text-rose-500/70 mt-2 font-medium">Requires immediate cross-team alignment</span>
       </div>
     </div>
 
-    <!-- Charts & Matrix -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div class="card p-6">
-        <h2 class="text-lg font-bold text-white mb-1">Session Action Matrix</h2>
-        <p class="text-xs text-slate-400 mb-4">Cross-referencing ratings with timing feedback</p>
-        <div class="grid grid-cols-2 gap-3 h-72">
-          <div class="bg-emerald-950/40 border border-emerald-800/50 p-3 rounded-lg overflow-y-auto">
-            <span class="text-xs font-bold text-emerald-400 uppercase">🌟 Core Gold (Keep)</span>
-            <ul id="matrix-gold" class="text-xs mt-2 space-y-1.5 text-emerald-200"></ul>
+    <!-- Middle Section: Matrix & Chart -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      
+      <!-- Session Action Matrix -->
+      <div class="card p-7 flex flex-col justify-between">
+        <div class="mb-4">
+          <h2 class="text-xl font-bold text-white">Session Action Matrix</h2>
+          <p class="text-xs text-slate-400 mt-1">Cross-referencing session ratings with timing feedback</p>
+        </div>
+        <div class="grid grid-cols-2 gap-4 h-[320px]">
+          <div class="bg-emerald-950/30 border border-emerald-800/40 p-4 rounded-xl flex flex-col">
+            <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-2">🌟 Core Gold (Keep & Scale)</span>
+            <ul id="matrix-gold" class="text-sm space-y-2 text-emerald-200 overflow-y-auto pr-1"></ul>
           </div>
-          <div class="bg-amber-950/40 border border-amber-800/50 p-3 rounded-lg overflow-y-auto">
-            <span class="text-xs font-bold text-amber-400 uppercase">⏱️ Shift Timing</span>
-            <ul id="matrix-shift" class="text-xs mt-2 space-y-1.5 text-amber-200"></ul>
+          <div class="bg-amber-950/30 border border-amber-800/40 p-4 rounded-xl flex flex-col">
+            <span class="text-xs font-bold text-amber-400 uppercase tracking-wider mb-2">⏱️ Shift Timing (Adjust Week)</span>
+            <ul id="matrix-shift" class="text-sm space-y-2 text-amber-200 overflow-y-auto pr-1"></ul>
           </div>
-          <div class="bg-slate-800/50 border border-slate-700 p-3 rounded-lg overflow-y-auto">
-            <span class="text-xs font-bold text-slate-400 uppercase">💤 Low Impact</span>
-            <ul id="matrix-low" class="text-xs mt-2 space-y-1.5 text-slate-300"></ul>
+          <div class="bg-slate-800/40 border border-slate-700/60 p-4 rounded-xl flex flex-col">
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">💤 Low Impact (Optional)</span>
+            <ul id="matrix-low" class="text-sm space-y-2 text-slate-300 overflow-y-auto pr-1"></ul>
           </div>
-          <div class="bg-rose-950/40 border border-rose-800/50 p-3 rounded-lg overflow-y-auto">
-            <span class="text-xs font-bold text-rose-400 uppercase">⚠️ Redesign / Kill</span>
-            <ul id="matrix-kill" class="text-xs mt-2 space-y-1.5 text-rose-200"></ul>
+          <div class="bg-rose-950/30 border border-rose-800/40 p-4 rounded-xl flex flex-col">
+            <span class="text-xs font-bold text-rose-400 uppercase tracking-wider mb-2">⚠️ Redesign or Remove</span>
+            <ul id="matrix-kill" class="text-sm space-y-2 text-rose-200 overflow-y-auto pr-1"></ul>
           </div>
         </div>
       </div>
 
-      <div class="card p-6 flex flex-col">
-        <h2 class="text-lg font-bold text-white mb-1">Ramp Milestones Timeline</h2>
-        <p class="text-xs text-slate-400 mb-4">Average weeks reported by joiners</p>
-        <div class="flex-1 min-h-[240px]">
+      <!-- Ramp Chart -->
+      <div class="card p-7 flex flex-col justify-between">
+        <div class="mb-2">
+          <h2 class="text-xl font-bold text-white">Ramp Milestones Timeline</h2>
+          <p class="text-xs text-slate-400 mt-1">Average onboarding weeks reported by joiners</p>
+        </div>
+        <div class="relative w-full h-[310px] mt-2">
           <canvas id="rampChart"></canvas>
         </div>
       </div>
+
     </div>
 
-    <!-- Voice of Joiners -->
-    <div class="card p-6">
-      <h2 class="text-lg font-bold text-white mb-4">Voice of the Joiners (Qualitative Feedback)</h2>
+    <!-- Bottom Section: Qualitative Voice of the Joiners -->
+    <div class="card p-8">
+      <div class="mb-6">
+        <h2 class="text-xl font-bold text-white">Voice of the Joiners (Qualitative Feedback)</h2>
+        <p class="text-xs text-slate-400 mt-1">Raw insights extracted directly from survey open-text answers</p>
+      </div>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div>
-          <h3 class="text-xs font-bold text-rose-400 uppercase tracking-wider mb-3 border-b border-slate-700 pb-2">Remove / Ramp Faster</h3>
-          <ul id="qual-remove" class="text-xs text-slate-300 space-y-3"></ul>
+        <div class="bg-slate-900/60 p-5 rounded-xl border border-slate-800">
+          <h3 class="text-xs font-bold text-rose-400 uppercase tracking-wider mb-4 pb-2 border-b border-rose-500/20 flex items-center justify-between">
+            <span> Remove / Ramp Faster</span>
+            <span>✂️</span>
+          </h3>
+          <ul id="qual-remove" class="text-xs text-slate-300 space-y-3 max-h-[250px] overflow-y-auto pr-2"></ul>
         </div>
-        <div>
-          <h3 class="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-3 border-b border-slate-700 pb-2">Keep / What Worked</h3>
-          <ul id="qual-keep" class="text-xs text-slate-300 space-y-3"></ul>
+        <div class="bg-slate-900/60 p-5 rounded-xl border border-slate-800">
+          <h3 class="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-4 pb-2 border-b border-emerald-500/20 flex items-center justify-between">
+            <span> What Worked Well</span>
+            <span>🙌</span>
+          </h3>
+          <ul id="qual-keep" class="text-xs text-slate-300 space-y-3 max-h-[250px] overflow-y-auto pr-2"></ul>
         </div>
-        <div>
-          <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wider mb-3 border-b border-slate-700 pb-2">Missing / Suggestions</h3>
-          <ul id="qual-missing" class="text-xs text-slate-300 space-y-3"></ul>
+        <div class="bg-slate-900/60 p-5 rounded-xl border border-slate-800">
+          <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wider mb-4 pb-2 border-b border-sky-500/20 flex items-center justify-between">
+            <span> Missing / Suggestions</span>
+            <span>💡</span>
+          </h3>
+          <ul id="qual-missing" class="text-xs text-slate-300 space-y-3 max-h-[250px] overflow-y-auto pr-2"></ul>
         </div>
       </div>
     </div>
+
   </div>
 
 <script>
   let rawMaster = [], rawSessions = [], currentDomain = 'All', chartInstance = null;
 
-  // טעינה פנימית מגוגל שיטס ב-0.2 שניות (ללא FETCH וללא CORS!)
   google.script.run.withSuccessHandler(function(data) {
     if(data && data.master) {
       rawMaster = parse2D(data.master);
@@ -134,9 +163,11 @@
 
   function filterDomain(domain) {
     currentDomain = domain;
-    document.querySelectorAll('.filter-btn').forEach(b => b.className = 'filter-btn px-5 py-2 text-sm bg-slate-800 text-slate-300 rounded-lg font-semibold hover:bg-slate-700');
+    document.querySelectorAll('.filter-btn').forEach(b => {
+      b.className = 'filter-btn px-6 py-3 text-sm bg-slate-800 text-slate-300 hover:text-white rounded-xl font-bold hover:bg-slate-700 transition-all';
+    });
     const active = document.getElementById(domain === 'R&D' ? 'btn-RnD' : domain === 'Product' ? 'btn-Product' : 'btn-All');
-    if(active) active.className = 'filter-btn px-5 py-2 text-sm bg-[#ff0083] text-white rounded-lg font-semibold shadow';
+    if(active) active.className = 'filter-btn px-6 py-3 text-sm bg-[#ff0083] text-white rounded-xl font-bold shadow-lg transition-all transform scale-105';
     render();
   }
 
@@ -189,7 +220,10 @@
       const avg = sessStats[name].sum / sessStats[name].count;
       const badTiming = (sessStats[name].timingIssues / sessStats[name].count) > 0.25;
       const highRating = avg >= 3.8;
-      const li = `<li>${name} <span class="opacity-60">(${avg.toFixed(1)})</span></li>`;
+      const li = `<li class="flex justify-between items-center bg-slate-900/40 p-2 rounded-lg border border-slate-800">
+                    <span class="font-medium">${name}</span>
+                    <span class="font-bold text-xs bg-slate-800 px-2 py-1 rounded text-slate-300">${avg.toFixed(1)} ★</span>
+                  </li>`;
 
       if(highRating && !badTiming) ulG.innerHTML += li;
       else if(highRating && badTiming) ulS.innerHTML += li;
@@ -213,20 +247,36 @@
     
     chartInstance = new Chart(ctx, {
       type: 'bar',
-      data: { labels: ['1: First Task', '2: Full Independence', '3: Network / Contacts'], datasets: [{ data: data, backgroundColor: '#ff0083', borderRadius: 6 }] },
-      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: '#334155' }, ticks: { color: '#94a3b8' } }, x: { ticks: { color: '#94a3b8' } } } }
+      data: { 
+        labels: ['1: First Independent Task', '2: Full Independence', '3: Knew Who To Go To'], 
+        datasets: [{ data: data, backgroundColor: '#ff0083', borderRadius: 8, barThickness: 45 }] 
+      },
+      options: { 
+        responsive: true, 
+        maintainAspectRatio: false, 
+        plugins: { legend: { display: false } }, 
+        scales: { 
+          y: { beginAtZero: true, grid: { color: '#1e293b' }, ticks: { color: '#94a3b8', font: { size: 12 } } }, 
+          x: { grid: { display: false }, ticks: { color: '#cbd5e1', font: { size: 13, weight: '600' } } } 
+        } 
+      }
     });
   }
 
   function renderQualitative(joiners) {
     const ulR = document.getElementById('qual-remove'), ulK = document.getElementById('qual-keep'), ulM = document.getElementById('qual-missing');
     ulR.innerHTML = ''; ulK.innerHTML = ''; ulM.innerHTML = '';
+
     joiners.forEach(j => {
       const qR = getVal(j, 'remove'), qK = getVal(j, 'keep'), qM = getVal(j, 'missing');
-      if(qR && qR.length > 2) ulR.innerHTML += `<li class="border-b border-slate-800 pb-2">"${qR}"</li>`;
-      if(qK && qK.length > 2) ulK.innerHTML += `<li class="border-b border-slate-800 pb-2">"${qK}"</li>`;
-      if(qM && qM.length > 2) ulM.innerHTML += `<li class="border-b border-slate-800 pb-2">"${qM}"</li>`;
+      if(qR && qR.length > 2) ulR.innerHTML += `<li class="bg-slate-800/60 p-3 rounded-lg border border-slate-700/50 leading-relaxed font-normal">"${qR}"</li>`;
+      if(qK && qK.length > 2) ulK.innerHTML += `<li class="bg-slate-800/60 p-3 rounded-lg border border-slate-700/50 leading-relaxed font-normal">"${qK}"</li>`;
+      if(qM && qM.length > 2) ulM.innerHTML += `<li class="bg-slate-800/60 p-3 rounded-lg border border-slate-700/50 leading-relaxed font-normal">"${qM}"</li>`;
     });
+
+    if(!ulR.innerHTML) ulR.innerHTML = '<span class="text-slate-500 italic">No feedback provided yet.</span>';
+    if(!ulK.innerHTML) ulK.innerHTML = '<span class="text-slate-500 italic">No feedback provided yet.</span>';
+    if(!ulM.innerHTML) ulM.innerHTML = '<span class="text-slate-500 italic">No feedback provided yet.</span>';
   }
 </script>
 </body>
