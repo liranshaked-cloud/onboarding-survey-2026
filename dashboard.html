@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Onboarding Executive Dashboard 2026</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; background: #f8fafc; }
+    .loader { border: 4px solid #f3f3f3; border-top: 4px solid #FF0083; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    .hide { display: none !important; }
+  </style>
+</head>
+<body class="p-4 md:p-8">
+
+  <div id="loading-screen" class="fixed inset-0 bg-white/90 z-50 flex flex-col items-center justify-center">
+    <div class="loader mb-4"></div>
+    <div class="text-slate-600 font-medium">Crunching Onboarding Data...</div>
+  </div>
+
+  <div class="max-w-7xl mx-auto">
+    <!-- Header & Filters -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 bg-white p-6 rounded-xl shadow-sm border border-slate-200 gap-4">
+      <div>
+        <h1 class="text-2xl font-bold text-slate-900">Onboarding Strategic Insights</h1>
+        <p class="text-sm text-slate-500">Live analytics & cross-referenced feedback</p>
+      </div>
+      <div class="flex gap-2">
+        <button onclick="applyFilter('All')" id="btn-All" class="filter-btn px-4 py-2 text-sm bg-[#FF0083] text-white rounded-lg font-medium shadow-sm">All</button>
+        <button onclick="applyFilter('R&D / Dev')" id="btn-R&D" class="filter-btn px-4 py-2 text-sm bg-slate-100 text-slate-700 rounded-lg font-medium hover:bg-slate-200">R&D / Dev</button>
+        <button onclick="applyFilter('Product')" id="btn-Product" class="filter-btn px-4 py-2 text-sm bg-slate-100 text-slate-700 rounded-lg font-medium hover:bg-slate-200">Product</button>
+      </div>
+    </div>
+
+    <!-- Key Metrics Summary -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm relative overflow-hidden">
+        <div class="absolute top-0 right-0 p-3 opacity-10 text-4xl">⏱️</div>
+        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Avg. Time to Independence</span>
+        <div class="text-3xl font-bold text-slate-800 mt-2"><span id="kpi-ramp">--</span> <span class="text-sm font-normal text-slate-500">weeks</span></div>
+      </div>
+      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm relative overflow-hidden">
+        <div class="absolute top-0 right-0 p-3 opacity-10 text-4xl">📊</div>
+        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Responses (Joiners)</span>
+        <div class="text-3xl font-bold text-emerald-600 mt-2" id="kpi-responses">--</div>
+      </div>
+      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm relative overflow-hidden md:col-span-2">
+        <div class="absolute top-0 right-0 p-3 opacity-10 text-4xl">🚧</div>
+        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Top Friction Point / Blocker</span>
+        <div class="text-lg font-bold text-rose-600 mt-2" id="kpi-blocker">--</div>
+      </div>
+    </div>
+
+    <!-- Visual Grid Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+      
+      <!-- 2x2 Session Matrix -->
+      <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col">
+        <h2 class="text-lg font-semibold text-slate-800 mb-1">Session Action Matrix</h2>
+        <p class="text-xs text-slate-500 mb-4">Cross-referencing Average Rating with Timing Feedback</p>
+        
+        <div class="grid grid-cols-2 gap-4 flex-1">
+          <!-- Core Gold -->
+          <div class="bg-emerald-50/50 border border-emerald-200 p-4 rounded-lg flex flex-col">
+            <span class="text-[11px] font-bold text-emerald-700 uppercase tracking-wide mb-2 flex items-center gap-1"><span>🌟</span> Core Gold (Keep)</span>
+            <span class="text-[10px] text-emerald-600/70 mb-2">High Rating + Good Timing</span>
+            <ul id="matrix-gold" class="text-xs space-y-1.5 text-emerald-900 overflow-y-auto max-h-[120px] font-medium"></ul>
+          </div>
+          <!-- Shift Timing -->
+          <div class="bg-amber-50/50 border border-amber-200 p-4 rounded-lg flex flex-col">
+            <span class="text-[11px] font-bold text-amber-700 uppercase tracking-wide mb-2 flex items-center gap-1"><span>⏱️</span> Shift Timing</span>
+            <span class="text-[10px] text-amber-600/70 mb-2">High Rating + Too Early/Late</span>
+            <ul id="matrix-shift" class="text-xs space-y-1.5 text-amber-900 overflow-y-auto max-h-[120px] font-medium"></ul>
+          </div>
+          <!-- Low Impact -->
+          <div class="bg-slate-50 border border-slate-200 p-4 rounded-lg flex flex-col">
+            <span class="text-[11px] font-bold text-slate-600 uppercase tracking-wide mb-2 flex items-center gap-1"><span>💤</span> Low Impact</span>
+            <span class="text-[10px] text-slate-500/70 mb-2">Low Rating + Good Timing</span>
+            <ul id="matrix-low" class="text-xs space-y-1.5 text-slate-700 overflow-y-auto max-h-[120px] font-medium"></ul>
+          </div>
+          <!-- Redesign / Kill -->
+          <div class="bg-rose-50/50 border border-rose-200 p-4 rounded-lg flex flex-col">
+            <span class="text-[11px] font-bold text-rose-700 uppercase tracking-wide mb-2 flex items-center gap-1"><span>⚠️</span> Redesign / Kill</span>
+            <span class="text-[10px] text-rose-600/70 mb-2">Low Rating + Bad Timing</span>
+            <ul id="matrix-kill" class="text-xs space-y-1.5 text-rose-900 overflow-y-auto max-h-[120px] font-medium"></ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Expectation Gap Chart -->
+      <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col">
+        <h2 class="text-lg font-semibold text-slate-800 mb-1">Ramp Milestones Timeline</h2>
+        <p class="text-xs text-slate-500 mb-4">Average weeks to reach independence stages</p>
+        <div class="flex-1 relative w-full h-full min-h-[250px]">
+          <canvas id="rampChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Qualitative Insights -->
+    <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm mb-12">
+      <h2 class="text-lg font-semibold text-slate-800 mb-4">The Voice of the Joiners</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div>
+          <h3 class="text-sm font-bold text-rose-600 uppercase tracking-wider mb-3 border-b pb-2">Remove / Frustrations</h3>
+          <ul id="qual-remove" class="text-sm text-slate-700 space-y-3"></ul>
+        </div>
+        <div>
+          <h3 class="text-sm font-bold text-emerald-600 uppercase tracking-wider mb-3 border-b pb-2">Keep / What Worked</h3>
+          <ul id="qual-keep" class="text-sm text-slate-700 space-y-3"></ul>
+        </div>
+        <div>
+          <h3 class="text-sm font-bold text-blue-600 uppercase tracking-wider mb-3 border-b pb-2">Missing / Suggestions</h3>
+          <ul id="qual-missing" class="text-sm text-slate-700 space-y-3"></ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+<script>
+  // חיבור ל-API שבנית
+  const API_URL = 'https://script.google.com/macros/s/AKfycbwyzHTZ6HUcCA6IqtlsuNc0GXVRYH7qZSsKKkwGoYqj2ehX_njmVCoiFkFgkaxXiNU/exec?type=analytics';
+
+  let rawMaster = [];
+  let rawSessions = [];
+  let currentDomain = 'All';
+  let chartInstance = null;
+
+  async function init() {
+    try {
+      const res = await fetch(API_URL);
+      const json = await res.json();
+      if (json.ok) {
+        // המרת המערך הדו-ממדי של גוגל למערך של אובייקטים נוחים
+        rawMaster = parse2DArray(json.master);
+        rawSessions = parse2DArray(json.sessions);
+        document.getElementById('loading-screen').classList.add('hide');
+        processAndRender();
+      }
+    } catch(err) {
+      console.error('Failed to load data:', err);
+      document.getElementById('loading-screen').innerHTML = '<div class="text-rose-600 font-bold">Error loading data. Check console.</div>';
+    }
+  }
+
+  function parse2DArray(data) {
+    if(!data || data.length < 2) return [];
+    const headers = data[0].map(h => String(h).trim().toLowerCase());
+    return data.slice(1).map(row => {
+      let obj = {};
+      headers.forEach((h, i) => { obj[h] = row[i]; });
+      return obj;
+    });
+  }
+
+  function applyFilter(domain) {
+    currentDomain = domain;
+    
+    // Update Button Styles
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.classList.remove('bg-[#FF0083]', 'text-white');
+      btn.classList.add('bg-slate-100', 'text-slate-700');
+    });
+    const activeBtn = document.getElementById(domain === 'R&D / Dev' ? 'btn-R&D' : domain === 'Product' ? 'btn-Product' : 'btn-All');
+    if(activeBtn) {
+      activeBtn.classList.remove('bg-slate-100', 'text-slate-700');
+      activeBtn.classList.add('bg-[#FF0083]', 'text-white');
+    }
+
+    processAndRender();
+  }
+
+  function processAndRender() {
+    // 1. סינון הנתונים לפי הדומיין הנבחר
+    const masterData = rawMaster.filter(r => currentDomain === 'All' || String(r['domain / track']).includes(currentDomain));
+    const joiners = masterData.filter(r => String(r.type).toLowerCase() === 'onboarder');
+    
+    // 2. חישוב KPIs
+    document.getElementById('kpi-responses').textContent = joiners.length;
+    
+    let ramp2Sum = 0, ramp2Count = 0;
+    let blockersMap = {};
+    
+    joiners.forEach(j => {
+      // Ramp
+      const rampStr = String(j['ramp 2: full independence'] || '').toLowerCase();
+      if(rampStr.includes('week')) {
+        ramp2Sum += parseInt(rampStr) || 0;
+        ramp2Count++;
+      } else if(rampStr.includes('month')) {
+        ramp2Sum += (parseInt(rampStr) || 0) * 4; // המרה של חודשים לשבועות
+        ramp2Count++;
+      }
+
+      // Blockers
+      const blkStr = String(j['main blockers'] || '');
+      if(blkStr) {
+        blkStr.split('|').forEach(b => {
+          const cleanB = b.trim();
+          if(cleanB && cleanB !== 'Nothing — ramp felt smooth') {
+            blockersMap[cleanB] = (blockersMap[cleanB] || 0) + 1;
+          }
+        });
+      }
+    });
+
+    const avgRamp = ramp2Count > 0 ? (ramp2Sum / ramp2Count).toFixed(1) : '--';
+    document.getElementById('kpi-ramp').textContent = avgRamp;
+
+    // מציאת החסם הנפוץ ביותר
+    let topBlocker = '--';
+    let maxB = 0;
+    for(let b in blockersMap) {
+      if(blockersMap[b] > maxB) { maxB = blockersMap[b]; topBlocker = b; }
+    }
+    document.getElementById('kpi-blocker').textContent = topBlocker;
+
+    // 3. עיבוד נתוני Session Matrix
+    renderMatrix(rawSessions, currentDomain);
+
+    // 4. עיבוד גרף ציפיות
+    renderChart(joiners);
+
+    // 5. תובנות איכותניות
+    renderQualitative(joiners);
+  }
+
+  function renderMatrix(sessions, domain) {
+    // סינון שורות הסשנים לפי הדומיין
+    const filteredSess = sessions.filter(s => {
+      // אם אין דומיין בקובץ הסשנים, נסנן לפי Joiners מה-Master? לצורך פשטות נקבץ לפי שם הסשן.
+      // הערה: נדרש קשר, לכן נסנן את rawMaster וניקח רק את האימיילים הרלוונטיים
+      if(domain === 'All') return true;
+      const relevantEmails = rawMaster.filter(r => String(r['domain / track']).includes(domain)).map(r => r.email);
+      return relevantEmails.includes(s.email);
+    });
+
+    let sessStats = {};
+    filteredSess.forEach(s => {
+      const name = s['session name'];
+      const rating = parseInt(s['rating (1-5)']);
+      const timing = String(s['timing feedback']).toLowerCase();
+      
+      if(!name || isNaN(rating)) return;
+      if(!sessStats[name]) sessStats[name] = { sum:0, count:0, timingIssues:0 };
+      
+      sessStats[name].sum += rating;
+      sessStats[name].count += 1;
+      if(timing.includes('too early') || timing.includes('too late')) {
+        sessStats[name].timingIssues += 1;
+      }
+    });
+
+    const ulGold = document.getElementById('matrix-gold');
+    const ulShift = document.getElementById('matrix-shift');
+    const ulLow = document.getElementById('matrix-low');
+    const ulKill = document.getElementById('matrix-kill');
+    
+    ulGold.innerHTML = ''; ulShift.innerHTML = ''; ulLow.innerHTML = ''; ulKill.innerHTML = '';
+
+    for(let name in sessStats) {
+      const avg = sessStats[name].sum / sessStats[name].count;
+      const timingIssueRatio = sessStats[name].timingIssues / sessStats[name].count;
+      
+      const isHighRating = avg >= 3.8;
+      const isBadTiming = timingIssueRatio > 0.3; // מעל 30% אמרו שזה לא בזמן
+
+      const li = `<li>${name} <span class="text-opacity-50 font-normal">(${avg.toFixed(1)})</span></li>`;
+
+      if(isHighRating && !isBadTiming) ulGold.innerHTML += li;
+      else if(isHighRating && isBadTiming) ulShift.innerHTML += li;
+      else if(!isHighRating && !isBadTiming) ulLow.innerHTML += li;
+      else ulKill.innerHTML += li;
+    }
+
+    if(!ulGold.innerHTML) ulGold.innerHTML = '<li class="text-slate-400 font-normal italic">No sessions</li>';
+    if(!ulShift.innerHTML) ulShift.innerHTML = '<li class="text-slate-400 font-normal italic">No sessions</li>';
+    if(!ulLow.innerHTML) ulLow.innerHTML = '<li class="text-slate-400 font-normal italic">No sessions</li>';
+    if(!ulKill.innerHTML) ulKill.innerHTML = '<li class="text-slate-400 font-normal italic">No sessions</li>';
+  }
+
+  function renderChart(joiners) {
+    let r1Sum = 0, r1Count = 0;
+    let r2Sum = 0, r2Count = 0;
+    let r3Sum = 0, r3Count = 0;
+
+    joiners.forEach(j => {
+      const parseWeeks = (str) => {
+        str = String(str).toLowerCase();
+        if(str.includes('week')) return parseInt(str) || 0;
+        if(str.includes('month')) return (parseInt(str) || 0) * 4;
+        return 0;
+      };
+      
+      const v1 = parseWeeks(j['ramp 1: first independent task']);
+      if(v1) { r1Sum += v1; r1Count++; }
+      
+      const v2 = parseWeeks(j['ramp 2: full independence']);
+      if(v2) { r2Sum += v2; r2Count++; }
+      
+      const v3 = parseWeeks(j['ramp 3: knew who to go to']);
+      if(v3) { r3Sum += v3; r3Count++; }
+    });
+
+    const data = [
+      r1Count ? (r1Sum/r1Count).toFixed(1) : 0,
+      r2Count ? (r2Sum/r2Count).toFixed(1) : 0,
+      r3Count ? (r3Sum/r3Count).toFixed(1) : 0
+    ];
+
+    const ctx = document.getElementById('rampChart').getContext('2d');
+    if(chartInstance) chartInstance.destroy();
+    
+    chartInstance = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['1: First Task', '2: Full Independence', '3: Network / Who to go to'],
+        datasets: [{
+          label: 'Avg. Weeks to Achieve',
+          data: data,
+          backgroundColor: '#FF0083',
+          borderRadius: 6,
+          barThickness: 40
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true, title: { display: true, text: 'Weeks' } } }
+      }
+    });
+  }
+
+  function renderQualitative(joiners) {
+    const ulRem = document.getElementById('qual-remove');
+    const ulKeep = document.getElementById('qual-keep');
+    const ulMiss = document.getElementById('qual-missing');
+    
+    ulRem.innerHTML = ''; ulKeep.innerHTML = ''; ulMiss.innerHTML = '';
+
+    let hasRem = false, hasKeep = false, hasMiss = false;
+
+    joiners.forEach(j => {
+      const qRem = j['open q: remove / ramp faster'];
+      const qKeep = j['open q: keep / what worked'];
+      const qMiss = j['open q: missing / additional'];
+
+      if(qRem && qRem.trim().length > 3) {
+        ulRem.innerHTML += `<li class="relative pl-3 before:content-[''] before:absolute before:left-0 before:top-2 before:w-1.5 before:h-1.5 before:bg-rose-400 before:rounded-full">"${qRem}"</li>`;
+        hasRem = true;
+      }
+      if(qKeep && qKeep.trim().length > 3) {
+        ulKeep.innerHTML += `<li class="relative pl-3 before:content-[''] before:absolute before:left-0 before:top-2 before:w-1.5 before:h-1.5 before:bg-emerald-400 before:rounded-full">"${qKeep}"</li>`;
+        hasKeep = true;
+      }
+      if(qMiss && qMiss.trim().length > 3) {
+        ulMiss.innerHTML += `<li class="relative pl-3 before:content-[''] before:absolute before:left-0 before:top-2 before:w-1.5 before:h-1.5 before:bg-blue-400 before:rounded-full">"${qMiss}"</li>`;
+        hasMiss = true;
+      }
+    });
+
+    if(!hasRem) ulRem.innerHTML = '<li class="text-slate-400 italic">No feedback provided yet.</li>';
+    if(!hasKeep) ulKeep.innerHTML = '<li class="text-slate-400 italic">No feedback provided yet.</li>';
+    if(!hasMiss) ulMiss.innerHTML = '<li class="text-slate-400 italic">No feedback provided yet.</li>';
+  }
+
+  // הפעלה
+  init();
+</script>
+</body>
+</html>
