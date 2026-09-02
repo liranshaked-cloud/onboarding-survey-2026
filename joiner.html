@@ -372,7 +372,7 @@ const BLOCKERS = {
 };
 
 const OPERATIONAL = [
-  { name:'QA @ Lemonade',                roles:['dev','pm','tl','pa'] },
+  { name:'QA @ Lemonade',              roles:['dev','pm','tl','pa'] },
   { name:'Architecture Overview',         roles:['dev','ds','pm','tl'] },
   { name:'Product Values',                roles:['pm','da','designer','pa','dev','tl'] },
   { name:'Product Work @ Lemonade',      roles:['pm','designer'] },
@@ -526,7 +526,7 @@ const ROLE_MAP = {
 
 function applyPersonData(d) {
   const loading = document.getElementById('person-loading');
-  if (loading) loading.remove(); // הסרה מוחלטת של אלמנט הטעינה מה-DOM
+  if (loading) loading.remove();
 
   const name = d.name || '';
   const role = d.role || '';
@@ -542,7 +542,7 @@ function applyPersonData(d) {
     if (document.getElementById('person-name')) document.getElementById('person-name').textContent = name;
     if (document.getElementById('person-role')) document.getElementById('person-role').textContent = role;
     if (document.getElementById('person-tenure')) document.getElementById('person-tenure').textContent = d.displayTenure || '';
-    card.style.display = 'block'; // הצגת הכרטיס המלא
+    card.style.display = 'block';
   }
 
   const roleKey = ROLE_MAP[role] || 'general';
@@ -553,6 +553,88 @@ function applyPersonData(d) {
     const b01 = document.getElementById('b01-text');
     if (b01) b01.textContent = B01[roleKey] || B01.general;
   }
+}
+
+// פונקציית שחזור תשובות קודמות לעובד
+function populateJoinerAnswers(answers) {
+  if (!answers) return;
+
+  // 1. Ramp Milestones
+  ['ramp_1', 'ramp_2', 'ramp_3'].forEach((key, i) => {
+    const rData = answers[key];
+    if (rData) {
+      const inputs = document.querySelectorAll('#section-b .time-number');
+      const pickers = document.querySelectorAll('#section-b .time-picker');
+      if (inputs[i] && rData.value !== undefined) {
+        inputs[i].value = rData.value;
+      }
+      if (pickers[i] && rData.unit) {
+        const btn = pickers[i].querySelector(`.time-unit-btn[data-unit="${rData.unit}"]`);
+        if (btn) btn.click();
+      }
+    }
+  });
+
+  // 2. Sessions
+  if (answers.sessions && typeof answers.sessions === 'object') {
+    document.querySelectorAll('.session-card').forEach(card => {
+      const name = card.querySelector('.session-name')?.textContent.trim();
+      if (name && answers.sessions[name]) {
+        const sData = answers.sessions[name];
+        if (sData.rating) {
+          card.querySelectorAll('.session-dot').forEach(d => {
+            if (d.textContent.trim() === String(sData.rating)) d.click();
+          });
+        }
+        if (sData.timing) {
+          const select = card.querySelector('.timing-select');
+          if (select) select.value = sData.timing;
+        }
+        if (sData.note) {
+          const noteInp = card.querySelector('.session-notes-input');
+          const toggle = card.querySelector('.session-notes-toggle');
+          if (noteInp) {
+            noteInp.value = sData.note;
+            noteInp.classList.add('open');
+            if (toggle) toggle.textContent = '− Hide note';
+          }
+        }
+      }
+    });
+  }
+
+  // 3. Blockers
+  if (Array.isArray(answers.blockers)) {
+    document.querySelectorAll('#blockers-list .checkbox-item').forEach(item => {
+      const label = item.querySelector('.checkbox-label')?.textContent.trim();
+      if (label && answers.blockers.includes(label)) {
+        item.classList.add('checked');
+      }
+    });
+  }
+
+  // 4. Buddy
+  if (answers.buddy) {
+    document.querySelectorAll('#buddy-selector .choice-btn').forEach(btn => {
+      if (btn.textContent.trim() === answers.buddy) btn.click();
+    });
+  }
+  if (answers.buddy_note_used) {
+    const ta = document.querySelector('#followup-used textarea');
+    if (ta) ta.value = answers.buddy_note_used;
+  }
+  if (answers.buddy_note_not) {
+    const ta = document.querySelector('#followup-not textarea');
+    if (ta) ta.value = answers.buddy_note_not;
+  }
+
+  // 5. Open Questions
+  ['open_1', 'open_2', 'open_3', 'open_4'].forEach((key, i) => {
+    const tas = document.querySelectorAll('#section-e textarea');
+    if (tas[i] && answers[key]) {
+      tas[i].value = answers[key];
+    }
+  });
 }
 
 async function loadServerData() {
@@ -566,6 +648,9 @@ async function loadServerData() {
     const json = await res.json();
     if (json.ok && json.data) {
       applyPersonData(json.data);
+      if (json.data.existingAnswers) {
+        populateJoinerAnswers(json.data.existingAnswers);
+      }
     } else {
       if (loadingEl) loadingEl.textContent = 'Error: ' + (json.error || 'Employee not found.');
     }
