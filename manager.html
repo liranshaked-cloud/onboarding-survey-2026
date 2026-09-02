@@ -274,7 +274,8 @@
 const API_URL = 'https://script.google.com/macros/s/AKfycbwyzHTZ6HUcCA6IqtlsuNc0GXVRYH7qZSsKKkwGoYqj2ehX_njmVCoiFkFgkaxXiNU/exec'; 
 
 const urlParams = new URLSearchParams(window.location.search);
-const TOKEN = urlParams.get('token');
+// תומך גם ב-Hash (#), גם ב-token= וגם ב-id= לגיבוי מלא
+const TOKEN = window.location.hash.replace('#', '') || urlParams.get('token') || urlParams.get('id');
 
 const SECTIONS = [
   { id:'section-b', name:'Per hire' },
