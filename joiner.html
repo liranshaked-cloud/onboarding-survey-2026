@@ -103,20 +103,8 @@
     .btn-submit { background: var(--pink); color: white; border: none; border-radius: var(--radius-sm); padding: 14px 32px; font-size: 15px; font-weight: 500; font-family: 'Inter', sans-serif; cursor: pointer; transition: opacity 0.15s; }
     .btn-submit:hover { opacity: 0.88; }
 
-    .pulse-loading {
-      text-align: center;
-      padding: 24px 20px;
-      font-size: 1.1rem;
-      font-weight: 500;
-      color: #ff0055;
-      animation: pulse 1.5s infinite ease-in-out;
-    }
-
-    @keyframes pulse {
-      0% { opacity: 0.4; transform: scale(0.98); }
-      50% { opacity: 1; transform: scale(1); }
-      100% { opacity: 0.4; transform: scale(0.98); }
-    }
+    .pulse-loading { text-align: center; padding: 24px 20px; font-size: 1.1rem; font-weight: 500; color: #ff0055; animation: pulse 1.5s infinite ease-in-out; }
+    @keyframes pulse { 0% { opacity: 0.4; transform: scale(0.98); } 50% { opacity: 1; transform: scale(1); } 100% { opacity: 0.4; transform: scale(0.98); } }
   </style>
 </head>
 <body>
@@ -136,15 +124,12 @@
 
 <div class="survey-wrap">
 
-  <!-- INTRO -->
   <div style="padding-top:40px; margin-bottom:0;">
     <div style="background:var(--charcoal);border-radius:var(--radius);padding:32px;color:white;">
       <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:var(--pink);text-transform:uppercase;margin-bottom:14px;">Liran Shaked · L&amp;D Lead Tech Dev</div>
       <div id="personal-greeting" style="font-family:'Fraunces',serif;font-size:22px;font-weight:300;line-height:1.3;letter-spacing:-0.02em;margin-bottom:16px;">I joined Lemonade a few months ago to lead L&D — and onboarding is the first thing I'm working on.</div>
       
-      <div id="person-loading" class="pulse-loading">
-        Loading your onboarding details... ⏳
-      </div>
+      <div id="person-loading" class="pulse-loading">Loading your onboarding details... ⏳</div>
 
       <div id="person-card" style="display:none;background:rgba(255,255,255,0.08);border-radius:8px;padding:14px 18px;margin-bottom:16px;font-size:13px;color:rgba(255,255,255,0.9);line-height:1.8;">
         <div id="person-name" style="font-weight:600;font-size:15px;margin-bottom:4px;"></div>
@@ -512,7 +497,6 @@ document.querySelectorAll('.question').forEach(q => {
   q.addEventListener('click', () => { document.querySelectorAll('.question').forEach(qq => qq.classList.remove('focused')); q.classList.add('focused'); });
 });
 
-// Click handler for Not Yet buttons in Joiner Survey
 document.querySelectorAll('.not-yet-btn').forEach(btn => {
   btn.addEventListener('click', (e) => {
     e.preventDefault();
@@ -539,14 +523,20 @@ document.querySelectorAll('.not-yet-btn').forEach(btn => {
 renderBlockers('general');
 updateProgress();
 
-const ROLE_MAP = {
-  'Product Manager': 'pm', 'Developer': 'dev', 'Data Analyst': 'da',
-  'Data Scientist': 'ds', 'Designer': 'designer', 'QA': 'qa',
-  'Team Lead': 'tl', 'Product Analyst': 'pa',
-  'Sr. Software Engineer I': 'dev', 'Sr. Software Engineer II': 'dev',
-  'Software Engineer II': 'dev', 'Manager, Software Engineering': 'tl',
-  'Assoc. Manager, SW Engineering': 'tl', 'Sr. Software Engineer': 'dev'
-};
+// פונקציית זיהוי תפקיד גמישה מבוססת מילות מפתח
+function getRoleKey(roleStr) {
+  if (!roleStr) return 'general';
+  const s = String(roleStr).toLowerCase();
+  if (s.includes('product manager') || s.includes('pm') || s.includes('vp product') || s.includes('head of product') || s.includes('product owner')) return 'pm';
+  if (s.includes('product analyst') || s.includes('pa')) return 'pa';
+  if (s.includes('data analyst') || s.includes('da') || s.includes('bi')) return 'da';
+  if (s.includes('data scientist') || s.includes('ds')) return 'ds';
+  if (s.includes('designer') || s.includes('design')) return 'designer';
+  if (s.includes('qa') || s.includes('test')) return 'qa';
+  if (s.includes('team lead') || s.includes('manager, sw') || s.includes('engineering manager') || s.includes('tl')) return 'tl';
+  if (s.includes('dev') || s.includes('engineer') || s.includes('software') || s.includes('frontend') || s.includes('backend') || s.includes('sw')) return 'dev';
+  return 'general';
+}
 
 function applyPersonData(d) {
   const loading = document.getElementById('person-loading');
@@ -569,7 +559,7 @@ function applyPersonData(d) {
     card.style.display = 'block';
   }
 
-  const roleKey = ROLE_MAP[role] || 'general';
+  const roleKey = getRoleKey(role);
   if (roleKey) {
     selectedRole = roleKey;
     renderSessions(roleKey);
@@ -752,7 +742,7 @@ document.querySelector('.btn-submit').addEventListener('click', async function()
     });
 
     document.querySelector('.survey-wrap').innerHTML = `
-      <div style="text-align:center;padding:80px 24px;max-width:480px;margin:0 auto;">
+      <div style="text-align:center;padding:80px 24px;max-width:480px;margin:0 me auto;">
         <div style="font-size:48px;margin-bottom:24px;">🎉</div>
         <div style="font-family:'Fraunces',serif;font-size:28px;font-weight:300;letter-spacing:-0.02em;margin-bottom:12px;">Thank you.</div>
         <div style="font-size:15px;color:var(--mid);line-height:1.6;">Your answers have been saved.<br><br>
