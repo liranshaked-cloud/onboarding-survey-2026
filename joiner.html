@@ -336,7 +336,6 @@
 const API_URL = 'https://script.google.com/macros/s/AKfycbwyzHTZ6HUcCA6IqtlsuNc0GXVRYH7qZSsKKkwGoYqj2ehX_njmVCoiFkFgkaxXiNU/exec'; 
 
 const urlParams = new URLSearchParams(window.location.search);
-// תומך גם ב-Hash (#), גם ב-token= וגם ב-id= לגיבוי מלא
 const TOKEN = window.location.hash.replace('#', '') || urlParams.get('token') || urlParams.get('id');
 
 const SECTIONS = [
@@ -513,6 +512,30 @@ document.querySelectorAll('.question').forEach(q => {
   q.addEventListener('click', () => { document.querySelectorAll('.question').forEach(qq => qq.classList.remove('focused')); q.classList.add('focused'); });
 });
 
+// Click handler for Not Yet buttons in Joiner Survey
+document.querySelectorAll('.not-yet-btn').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    const q = btn.closest('.question');
+    const input = q.querySelector('.time-number');
+    const isSelected = btn.classList.toggle('selected');
+
+    if (isSelected) {
+      btn.style.borderColor = 'var(--pink)';
+      btn.style.background = 'var(--pink-light)';
+      btn.style.color = 'var(--pink)';
+      btn.style.fontWeight = '600';
+      if (input) { input.value = ''; input.disabled = true; }
+    } else {
+      btn.style.borderColor = 'var(--border)';
+      btn.style.background = 'none';
+      btn.style.color = 'var(--light)';
+      btn.style.fontWeight = 'normal';
+      if (input) input.disabled = false;
+    }
+  });
+});
+
 renderBlockers('general');
 updateProgress();
 
@@ -556,27 +579,32 @@ function applyPersonData(d) {
   }
 }
 
-// פונקציית שחזור תשובות קודמות לעובד
 function populateJoinerAnswers(answers) {
   if (!answers) return;
 
-  // 1. Ramp Milestones
   ['ramp_1', 'ramp_2', 'ramp_3'].forEach((key, i) => {
     const rData = answers[key];
     if (rData) {
-      const inputs = document.querySelectorAll('#section-b .time-number');
-      const pickers = document.querySelectorAll('#section-b .time-picker');
-      if (inputs[i] && rData.value !== undefined) {
-        inputs[i].value = rData.value;
+      const q = document.querySelectorAll('#section-b .question')[i];
+      if (!q) return;
+      
+      const input = q.querySelector('.time-number');
+      const notYetBtn = q.querySelector('.not-yet-btn');
+      const pickers = q.querySelector('.time-picker');
+
+      if (rData.value === 'Not yet') {
+        if (notYetBtn) notYetBtn.click();
+      } else if (input && rData.value !== undefined) {
+        input.value = rData.value;
       }
-      if (pickers[i] && rData.unit) {
-        const btn = pickers[i].querySelector(`.time-unit-btn[data-unit="${rData.unit}"]`);
+
+      if (pickers && rData.unit) {
+        const btn = pickers.querySelector(`.time-unit-btn[data-unit="${rData.unit}"]`);
         if (btn) btn.click();
       }
     }
   });
 
-  // 2. Sessions
   if (answers.sessions && typeof answers.sessions === 'object') {
     document.querySelectorAll('.session-card').forEach(card => {
       const name = card.querySelector('.session-name')?.textContent.trim();
@@ -604,7 +632,6 @@ function populateJoinerAnswers(answers) {
     });
   }
 
-  // 3. Blockers
   if (Array.isArray(answers.blockers)) {
     document.querySelectorAll('#blockers-list .checkbox-item').forEach(item => {
       const label = item.querySelector('.checkbox-label')?.textContent.trim();
@@ -614,7 +641,6 @@ function populateJoinerAnswers(answers) {
     });
   }
 
-  // 4. Buddy
   if (answers.buddy) {
     document.querySelectorAll('#buddy-selector .choice-btn').forEach(btn => {
       if (btn.textContent.trim() === answers.buddy) btn.click();
@@ -629,7 +655,6 @@ function populateJoinerAnswers(answers) {
     if (ta) ta.value = answers.buddy_note_not;
   }
 
-  // 5. Open Questions
   ['open_1', 'open_2', 'open_3', 'open_4'].forEach((key, i) => {
     const tas = document.querySelectorAll('#section-e textarea');
     if (tas[i] && answers[key]) {
@@ -667,10 +692,16 @@ function collectAnswers() {
   const answers = {};
   answers.role = selectedRole ? (ROLE_LABELS[selectedRole] || selectedRole) : '';
 
-  document.querySelectorAll('.time-number').forEach((inp, i) => {
-    const toggle = inp.closest('.time-picker')?.querySelector('.time-unit-btn.active');
+  document.querySelectorAll('#section-b .question').forEach((q, i) => {
+    const notYetSelected = q.querySelector('.not-yet-btn.selected');
+    const input = q.querySelector('.time-number');
+    const toggle = q.querySelector('.time-unit-btn.active');
     const unit = toggle ? toggle.dataset.unit : 'weeks';
-    answers['ramp_' + (i+1)] = { value: inp.value, unit };
+
+    answers['ramp_' + (i+1)] = {
+      value: notYetSelected ? 'Not yet' : (input ? input.value : ''),
+      unit: unit
+    };
   });
 
   const sessions = {};
