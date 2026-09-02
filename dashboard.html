@@ -16,15 +16,17 @@
 </head>
 <body>
 
-  <div id="loader" class="fixed inset-0 bg-slate-900/90 z-50 flex flex-col items-center justify-center">
-    <div class="loader mb-4"></div>
-    <div class="text-slate-300 font-medium text-lg">Loading Analytics...</div>
+  <!-- Loading Overlay -->
+  <div id="loader" class="fixed inset-0 bg-slate-900/90 z-50 flex flex-col items-center justify-center p-6 text-center">
+    <div id="spinner" class="loader mb-4"></div>
+    <div id="loader-status" class="text-slate-300 font-medium text-lg">Loading Analytics...</div>
   </div>
 
   <div class="max-w-7xl mx-auto space-y-6">
+    <!-- Top Bar -->
     <div class="card p-6 flex flex-col md:flex-row justify-between items-center gap-4">
       <div>
-        <h1 class="text-2xl font-bold text-white">🚀 Onboarding Strategic Dashboard</h1>
+        <h1 class="text-2xl font-bold text-white flex items-center gap-2">🚀 Onboarding Strategic Dashboard</h1>
         <p class="text-sm text-slate-400 mt-1">Real-time analysis from Master Analytics & Session Databases</p>
       </div>
       <div class="flex gap-2">
@@ -34,6 +36,7 @@
       </div>
     </div>
 
+    <!-- KPI Row -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
       <div class="card p-5">
         <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Completed Joiners</span>
@@ -49,6 +52,7 @@
       </div>
     </div>
 
+    <!-- Charts & Matrix -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <div class="card p-6">
         <h2 class="text-lg font-bold text-white mb-1">Session Action Matrix</h2>
@@ -82,6 +86,7 @@
       </div>
     </div>
 
+    <!-- Voice of Joiners -->
     <div class="card p-6">
       <h2 class="text-lg font-bold text-white mb-4">Voice of the Joiners (Qualitative Feedback)</h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -106,16 +111,24 @@
   let rawMaster = [], rawSessions = [], currentDomain = 'All', chartInstance = null;
 
   async function loadData() {
+    const statusEl = document.getElementById('loader-status');
+    const spinnerEl = document.getElementById('spinner');
     try {
       const res = await fetch(API_URL);
       const json = await res.json();
-      if(json.ok) {
+      if(json && json.ok) {
         rawMaster = parse2D(json.master);
         rawSessions = parse2D(json.sessions);
         document.getElementById('loader').classList.add('hidden');
         render();
+      } else {
+        throw new Error('API returned unsuccessful status.');
       }
-    } catch(e) { console.error(e); }
+    } catch(e) {
+      console.error('Fetch error:', e);
+      spinnerEl.classList.add('hidden');
+      statusEl.innerHTML = '<span class="text-rose-500 font-bold">⚠️ Connection Error</span><br><span class="text-sm text-slate-400 mt-2 block">Make sure Apps Script Web App permissions are set to "Anyone".</span>';
+    }
   }
 
   function parse2D(arr) {
