@@ -568,7 +568,13 @@ function applyPersonData(d) {
     if (b01) b01.textContent = B01[roleKey] || B01.general;
   }
 }
-
+if (json.ok && json.data) {
+  applyPersonData(json.data);
+  await new Promise(r => setTimeout(r, 50)); // תן ל-DOM לsettleף
+  if (json.data.existingAnswers) {
+    populateJoinerAnswers(json.data.existingAnswers);
+  }
+}
 function populateJoinerAnswers(answers) {
   if (!answers) return;
 
