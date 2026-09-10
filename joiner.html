@@ -15,7 +15,6 @@
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--charcoal); min-height: 100vh; }
-
     .survey-header { background: var(--white); border-bottom: 1px solid var(--border); padding: 16px 0; position: sticky; top: 0; z-index: 100; }
     .header-inner { max-width: 680px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; gap: 20px; }
     .wordmark { font-family: 'Fraunces', serif; font-size: 17px; font-weight: 400; color: var(--charcoal); letter-spacing: -0.02em; white-space: nowrap; }
@@ -26,7 +25,6 @@
     .progress-counter { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--light); }
     .progress-bar { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
     .progress-fill { height: 100%; background: var(--pink); border-radius: 2px; transition: width 0.35s ease; }
-
     .survey-wrap { max-width: 680px; margin: 0 auto; padding: 0 24px 120px; }
     .survey-section { padding-top: 52px; }
     .section-intro { margin-bottom: 28px; }
@@ -36,17 +34,14 @@
     .section-divider { display: flex; align-items: center; gap: 16px; margin: 52px 0 0; }
     .divider-line { flex: 1; height: 1px; background: var(--border); }
     .divider-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.15em; color: var(--light); text-transform: uppercase; white-space: nowrap; }
-
     .question { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 12px; transition: border-color 0.2s; cursor: pointer; }
     .question.focused { border-color: var(--pink); box-shadow: 0 0 0 3px rgba(255,0,131,0.06); }
     .q-text { font-size: 15px; font-weight: 500; color: var(--charcoal); line-height: 1.5; margin-bottom: 6px; }
     .q-hint { font-size: 12px; color: var(--light); margin-bottom: 16px; line-height: 1.5; }
-
     .input-row { display: flex; gap: 8px; flex-wrap: wrap; }
     .choice-btn { border: 1.5px solid var(--border); background: var(--white); border-radius: var(--radius-sm); padding: 9px 16px; font-size: 13px; font-family: 'Inter', sans-serif; color: var(--charcoal); cursor: pointer; transition: all 0.15s; white-space: nowrap; }
     .choice-btn:hover { border-color: var(--pink); color: var(--pink); }
     .choice-btn.selected { border-color: var(--pink); background: var(--pink-light); color: var(--pink); font-weight: 500; }
-
     .time-picker { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
     .time-unit-toggle { display: flex; border: 1.5px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
     .time-unit-btn { padding: 8px 14px; font-size: 12px; font-family: 'Inter', sans-serif; background: var(--white); border: none; cursor: pointer; color: var(--mid); transition: all 0.15s; }
@@ -57,7 +52,6 @@
     .not-yet-wrap { margin-top: 10px; }
     .not-yet-btn { font-size: 12px; color: var(--light); background: none; border: 1.5px dashed var(--border); border-radius: var(--radius-sm); padding: 7px 13px; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.15s; }
     .not-yet-btn:hover { border-color: var(--pink); color: var(--pink); }
-
     .checkbox-list { display: flex; flex-direction: column; gap: 8px; }
     .checkbox-item { display: flex; align-items: center; gap: 12px; padding: 11px 16px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.15s; }
     .checkbox-item:hover { border-color: #ccc; }
@@ -67,12 +61,9 @@
     .checkbox-check { color: white; font-size: 11px; display: none; }
     .checkbox-item.checked .checkbox-check { display: block; }
     .checkbox-label { font-size: 14px; color: var(--charcoal); }
-
     .text-input { width: 100%; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 12px 16px; font-size: 14px; font-family: 'Inter', sans-serif; color: var(--charcoal); resize: vertical; min-height: 72px; outline: none; transition: border-color 0.15s; background: var(--white); }
     .text-input:focus { border-color: var(--pink); }
-
     .info-note { background: var(--pink-light); border-left: 3px solid var(--pink); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; padding: 12px 16px; font-size: 13px; color: var(--mid); margin-bottom: 16px; line-height: 1.5; }
-
     .session-group-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--charcoal); font-weight: 500; margin-bottom: 4px; }
     .session-group-sub { font-size: 11px; color: var(--light); margin-bottom: 12px; }
     .session-header-row { display: grid; grid-template-columns: 1fr 150px 130px; gap: 12px; padding: 4px 14px; margin-bottom: 4px; }
@@ -94,21 +85,17 @@
     .role-prompt { background: var(--charcoal); border-radius: var(--radius-sm); padding: 20px 24px; color: rgba(255,255,255,0.6); font-size: 13px; text-align: center; line-height: 1.6; }
     .role-prompt strong { color: white; }
     .role-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--charcoal); color: white; font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 5px 12px; border-radius: 20px; margin-bottom: 16px; }
-
     .followup { display: none; margin-top: 14px; padding: 16px; background: var(--pink-light); border-radius: var(--radius-sm); border: 1.5px solid var(--pink); }
     .followup.open { display: block; }
     .followup-label { font-size: 13px; font-weight: 500; color: var(--charcoal); margin-bottom: 10px; }
-
     .submit-wrap { margin-top: 40px; display: flex; justify-content: flex-end; }
     .btn-submit { background: var(--pink); color: white; border: none; border-radius: var(--radius-sm); padding: 14px 32px; font-size: 15px; font-weight: 500; font-family: 'Inter', sans-serif; cursor: pointer; transition: opacity 0.15s; }
     .btn-submit:hover { opacity: 0.88; }
-
     .pulse-loading { text-align: center; padding: 24px 20px; font-size: 1.1rem; font-weight: 500; color: #ff0055; animation: pulse 1.5s infinite ease-in-out; }
     @keyframes pulse { 0% { opacity: 0.4; transform: scale(0.98); } 50% { opacity: 1; transform: scale(1); } 100% { opacity: 0.4; transform: scale(0.98); } }
   </style>
 </head>
 <body>
-
 <header class="survey-header">
   <div class="header-inner">
     <div class="wordmark">L&D <span>×</span> Onboarding</div>
@@ -121,16 +108,12 @@
     </div>
   </div>
 </header>
-
 <div class="survey-wrap">
-
   <div style="padding-top:40px; margin-bottom:0;">
     <div style="background:var(--charcoal);border-radius:var(--radius);padding:32px;color:white;">
       <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:var(--pink);text-transform:uppercase;margin-bottom:14px;">Liran Shaked · L&amp;D Lead Tech Dev</div>
       <div id="personal-greeting" style="font-family:'Fraunces',serif;font-size:22px;font-weight:300;line-height:1.3;letter-spacing:-0.02em;margin-bottom:16px;">I joined Lemonade a few months ago to lead L&D — and onboarding is the first thing I'm working on.</div>
-      
       <div id="person-loading" class="pulse-loading">Loading your onboarding details... ⏳</div>
-
       <div id="person-card" style="display:none;background:rgba(255,255,255,0.08);border-radius:8px;padding:14px 18px;margin-bottom:16px;font-size:13px;color:rgba(255,255,255,0.9);line-height:1.8;">
         <div id="person-name" style="font-weight:600;font-size:15px;margin-bottom:4px;"></div>
         <div id="person-role" style="color:rgba(255,255,255,0.6);"></div>
@@ -139,19 +122,14 @@
       <div style="font-size:13px;color:rgba(255,255,255,0.6);line-height:1.7;">I've started collecting feedback through conversations across R&D and Product — and before updating or changing anything, I'd love to hear directly from you.<br><br>About <strong style="color:white;">6–8 minutes</strong>. Sessions, ramp milestones, what slowed you down. <strong style="color:white;">No individual answers are shared</strong> — results go back to everyone as aggregate findings.</div>
     </div>
   </div>
-
   <div class="section-divider"><div class="divider-line"></div><div class="divider-label">Section B</div><div class="divider-line"></div></div>
-
-  <!-- B: RAMP -->
   <div class="survey-section" id="section-b" data-name="Ramp milestones">
     <div class="section-intro">
       <div class="section-tag">Section B · Ramp</div>
       <div class="section-title">How long did things take?</div>
       <div class="section-subtitle">Use weeks for the first couple of months, months after that. "Not yet" is a valid answer.</div>
     </div>
-
     <div class="info-note">These numbers are the baseline we've never had. Your estimates don't need to be precise — just honest.</div>
-
     <div class="question">
       <div class="q-text" id="b01-text">When did you first complete something independently?</div>
       <div class="time-picker">
@@ -164,7 +142,6 @@
       </div>
       <div class="not-yet-wrap"><button class="not-yet-btn">Not yet</button></div>
     </div>
-
     <div class="question">
       <div class="q-text">When could you take a task end to end fully independently — without needing validation or approval?</div>
       <div class="q-hint">From start to done — without needing to verify each step.</div>
@@ -178,7 +155,6 @@
       </div>
       <div class="not-yet-wrap"><button class="not-yet-btn">Not yet</button></div>
     </div>
-
     <div class="question">
       <div class="q-text">When did you know who to go to — without having to ask?</div>
       <div class="time-picker">
@@ -192,21 +168,16 @@
       <div class="not-yet-wrap"><button class="not-yet-btn">Not yet</button></div>
     </div>
   </div>
-
   <div class="section-divider"><div class="divider-line"></div><div class="divider-label">Section C</div><div class="divider-line"></div></div>
-
-  <!-- C: SESSIONS -->
   <div class="survey-section" id="section-c" data-name="Sessions">
     <div class="section-intro">
       <div class="section-tag">Section C · Sessions</div>
       <div class="section-title">The sessions you attended</div>
       <div class="section-subtitle">Rate usefulness 1–5 and timing. Add a note if something stood out — too early, only part was relevant, etc.</div>
     </div>
-
     <div id="role-prompt" class="role-prompt">
       <strong>Select your role above</strong> and sessions will appear here, filtered to what's relevant for you.
     </div>
-
     <div id="sessions-content" style="display:none;">
       <div class="role-badge" id="role-badge">📋</div>
       <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:20px;">
@@ -245,23 +216,18 @@
       </div>
     </div>
   </div>
-
   <div class="section-divider"><div class="divider-line"></div><div class="divider-label">Section D</div><div class="divider-line"></div></div>
-
-  <!-- D: BLOCKERS -->
   <div class="survey-section" id="section-d" data-name="Blockers">
     <div class="section-intro">
       <div class="section-tag">Section D · Blockers</div>
       <div class="section-title">What slowed you down most?</div>
       <div class="section-subtitle">We'll ask managers the same question — the gap between your answers is the finding.</div>
     </div>
-
     <div class="question">
       <div class="q-text">Where were you stuck longest?</div>
       <div class="q-hint">Select up to 3.</div>
       <div class="checkbox-list" id="blockers-list"></div>
     </div>
-
     <div class="question">
       <div class="q-text">Were you assigned a buddy?</div>
       <div class="input-row" id="buddy-selector">
@@ -279,58 +245,45 @@
       </div>
     </div>
   </div>
-
   <div class="section-divider"><div class="divider-line"></div><div class="divider-label">Section E</div><div class="divider-line"></div></div>
-
-  <!-- E: OPEN -->
   <div class="survey-section" id="section-e" data-name="Open questions">
     <div class="section-intro">
       <div class="section-tag">Section E · Open</div>
       <div class="section-title">Two open questions</div>
       <div class="section-subtitle">These become the roadmap.</div>
     </div>
-
     <div class="question">
       <div class="q-text">If you could remove one thing from onboarding — what would it be?</div>
       <textarea class="text-input" placeholder="A session, a process, something that took time without payoff..."></textarea>
     </div>
-
     <div class="question">
       <div class="q-text">What worked well and should stay?</div>
       <textarea class="text-input" placeholder="A session, a resource, someone who helped — anything that actually made a difference..."></textarea>
     </div>
-
     <div class="question">
       <div class="q-text">What was missing that you had to figure out on your own?</div>
       <textarea class="text-input" placeholder="Something you wished someone had told you, shown you, or set up for you..."></textarea>
     </div>
-
     <div class="question">
       <div class="q-text">Anything else we should know?</div>
       <textarea class="text-input" placeholder="Anything that didn't fit the questions above..."></textarea>
     </div>
-
     <div class="submit-wrap">
       <button class="btn-submit">Submit →</button>
     </div>
   </div>
-
 </div>
-
 <script>
 const API_URL = 'https://script.google.com/macros/s/AKfycbzz5dtr5YQim7X1fA29Uml5zjmDFFp1WQ1M9zyn-jSvH14u1VK3vyxK43hv3VCiXqQ/exec';
 const urlParams = new URLSearchParams(window.location.search);
 const TOKEN = window.location.hash.replace('#', '') || urlParams.get('token') || urlParams.get('id');
-
 const SECTIONS = [
   { id:'section-b', name:'Ramp milestones' },
   { id:'section-c', name:'Sessions' },
   { id:'section-d', name:'Blockers' },
   { id:'section-e', name:'Open questions' },
 ];
-
 const ROLE_LABELS = { pm:'Product Manager', dev:'Developer', da:'Data Analyst', ds:'Data Scientist', designer:'Designer', qa:'QA', tl:'Team Lead', pa:'Product Analyst', general:'Other' };
-
 const B01 = {
   dev: 'When did you first merge a PR to production?',
   pm: 'When did you first own a feature all the way through the product cycle?',
@@ -342,7 +295,6 @@ const B01 = {
   tl: 'When did you first run a planning session or squad weekly on your own?',
   general: 'When did you first complete a task fully independently?',
 };
-
 const BLOCKERS = {
   dev: ['Understanding service boundaries and who owns what', 'Setting up my dev environment (t-env, Okteto, CICD)', 'Navigating the codebase and architecture', 'Understanding the infrastructure and deployment flow', 'The insurance domain', 'Tools and access', 'Unclear expectations from my manager', 'Nothing — ramp felt smooth'],
   pm: ['Understanding the product process (Research → Review → Spec → Kickoff)', 'Getting up to speed with CoWork and the PM engine', 'Who to ask for what', 'Where things live (Fibery, Notion, Mixpanel)', 'Understanding OKRs and how to write good KRs', 'The insurance domain and product lines', 'Unclear expectations from my manager', 'Nothing — ramp felt smooth'],
@@ -354,40 +306,35 @@ const BLOCKERS = {
   tl: ['Understanding how OKRs and quarterly planning work here', 'Getting to know my squad well enough to unblock them', 'The codebase and service ownership', 'The insurance domain', 'Tools and access', 'Unclear expectations from my manager', 'Nothing — ramp felt smooth'],
   general: ['Who to ask for what', 'Where things live (docs, tools, decisions)', 'The insurance domain', 'Tools and access', 'What "good" looks like here', 'Unclear expectations from my manager', 'Nothing — ramp felt smooth'],
 };
-
 const OPERATIONAL = [
-  { name:'QA @ Lemonade',              roles:['dev','pm','tl','pa'] },
-  { name:'Architecture Overview',         roles:['dev','ds','pm','tl'] },
-  { name:'Product Values',                roles:['pm','da','designer','pa','dev','tl'] },
-  { name:'Product Work @ Lemonade',      roles:['pm','designer'] },
+  { name:'QA @ Lemonade', roles:['dev','pm','tl','pa'] },
+  { name:'Architecture Overview', roles:['dev','ds','pm','tl'] },
+  { name:'Product Values', roles:['pm','da','designer','pa','dev','tl'] },
+  { name:'Product Work @ Lemonade', roles:['pm','designer'] },
   { name:'From OKRs to Weekly Planning', roles:['pm','tl'] },
-  { name:'How We Do OKRs',               roles:['pm','da','tl','pa'] },
-  { name:'Mixpanel 101',                 roles:['pm'] },
-  { name:'Fibery Intro',                 roles:['pm','dev','ds','qa','tl','pa'] },
-  { name:'Reporting & Handling Bugs',    roles:['pm','qa','tl'] },
-  { name:'Product Strategy',             roles:['pm','pa','designer','dev','tl'] },
-  { name:'Lemonade Infrastructure',      roles:['dev','mobile','ds','tl'] },
-  { name:'Product Skills',               roles:['pm'] },
+  { name:'How We Do OKRs', roles:['pm','da','tl','pa'] },
+  { name:'Mixpanel 101', roles:['pm'] },
+  { name:'Fibery Intro', roles:['pm','dev','ds','qa','tl','pa'] },
+  { name:'Reporting & Handling Bugs', roles:['pm','qa','tl'] },
+  { name:'Product Strategy', roles:['pm','pa','designer','dev','tl'] },
+  { name:'Lemonade Infrastructure', roles:['dev','mobile','ds','tl'] },
+  { name:'Product Skills', roles:['pm'] },
 ];
-
 const FYI = [
-  { name:'Insurance Product 101',  roles:['dev','ds','pm','da','designer','qa','tl','pa','general','bizdev'] },
+  { name:'Insurance Product 101', roles:['dev','ds','pm','da','designer','qa','tl','pa','general','bizdev'] },
   { name:'Product Platform Intro', roles:['dev','ds','pm','da','designer','qa','tl','pa','general','bizdev'] },
-  { name:'Claims 101',             roles:['dev','ds','pm','da','designer','qa','general','bizdev','tl','pa'] },
-  { name:'AI @ Lemonade',          roles:['dev','ds','pm','da','designer','qa','general','bizdev','tl','pa'] },
-  { name:'Risk Overview',          roles:['dev','ds','pm','da','designer','qa','tl','general','pa'] },
-  { name:'Pet Overview',           roles:['dev','ds','pm','da','designer','qa','general','bizdev','tl','pa'] },
-  { name:'Car Overview',           roles:['dev','ds','pm','da','designer','qa','general','bizdev','tl','pa'] },
-  { name:'CX 101',                 roles:['pm','pa'] },
+  { name:'Claims 101', roles:['dev','ds','pm','da','designer','qa','general','bizdev','tl','pa'] },
+  { name:'AI @ Lemonade', roles:['dev','ds','pm','da','designer','qa','general','bizdev','tl','pa'] },
+  { name:'Risk Overview', roles:['dev','ds','pm','da','designer','qa','tl','general','pa'] },
+  { name:'Pet Overview', roles:['dev','ds','pm','da','designer','qa','general','bizdev','tl','pa'] },
+  { name:'Car Overview', roles:['dev','ds','pm','da','designer','qa','general','bizdev','tl','pa'] },
+  { name:'CX 101', roles:['pm','pa'] },
 ];
-
 const F2F = [
-  { name:'RnD Intro',    roles:['dev','ds','pm','da','designer','qa','tl','pa'] },
-  { name:'Analytics 101',roles:['pm'] },
+  { name:'RnD Intro', roles:['dev','ds','pm','da','designer','qa','tl','pa'] },
+  { name:'Analytics 101', roles:['pm'] },
 ];
-
 let selectedRole = null;
-
 function updateProgress() {
   const scrollY = window.scrollY;
   const docH = document.documentElement.scrollHeight - window.innerHeight;
@@ -400,7 +347,6 @@ function updateProgress() {
   document.getElementById('progressCounter').textContent = 'Section ' + (idx+1) + ' / ' + SECTIONS.length;
 }
 window.addEventListener('scroll', updateProgress, { passive: true });
-
 function buildCard(session) {
   const card = document.createElement('div');
   card.className = 'session-card';
@@ -428,7 +374,6 @@ function buildCard(session) {
   toggle.addEventListener('click', e => { e.stopPropagation(); notes.classList.toggle('open'); toggle.textContent = notes.classList.contains('open') ? '− Hide note' : '+ Add a note'; });
   return card;
 }
-
 function renderSessions(role) {
   const og = document.getElementById('operational-grid');
   const fg = document.getElementById('fyi-grid');
@@ -448,7 +393,6 @@ function renderSessions(role) {
   document.getElementById('f2f-group').style.display = showF2F ? 'block' : 'none';
   document.getElementById('f2f-separator').style.display = showF2F ? 'block' : 'none';
 }
-
 function renderBlockers(role) {
   const list = document.getElementById('blockers-list');
   list.innerHTML = '';
@@ -464,7 +408,6 @@ function renderBlockers(role) {
   otherWrap.innerHTML = `<textarea class="text-input" id="blockers-other" style="min-height:52px;" placeholder="Anything else that slowed you down..."></textarea>`;
   list.appendChild(otherWrap);
 }
-
 document.getElementById('buddy-selector').querySelectorAll('.choice-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.getElementById('buddy-selector').querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected'));
@@ -475,7 +418,6 @@ document.getElementById('buddy-selector').querySelectorAll('.choice-btn').forEac
     if (btn.dataset.buddy === 'yes-not') document.getElementById('followup-not').classList.add('open');
   });
 });
-
 document.querySelectorAll('.time-unit-toggle').forEach(toggle => {
   toggle.querySelectorAll('.time-unit-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -485,24 +427,20 @@ document.querySelectorAll('.time-unit-toggle').forEach(toggle => {
     });
   });
 });
-
 document.querySelectorAll('.input-row:not(#buddy-selector)').forEach(row => {
   row.querySelectorAll('.choice-btn').forEach(btn => {
     btn.addEventListener('click', () => { row.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected')); btn.classList.add('selected'); });
   });
 });
-
 document.querySelectorAll('.question').forEach(q => {
   q.addEventListener('click', () => { document.querySelectorAll('.question').forEach(qq => qq.classList.remove('focused')); q.classList.add('focused'); });
 });
-
 document.querySelectorAll('.not-yet-btn').forEach(btn => {
   btn.addEventListener('click', (e) => {
     e.preventDefault();
     const q = btn.closest('.question');
     const input = q.querySelector('.time-number');
     const isSelected = btn.classList.toggle('selected');
-
     if (isSelected) {
       btn.style.borderColor = 'var(--pink)';
       btn.style.background = 'var(--pink-light)';
@@ -518,11 +456,8 @@ document.querySelectorAll('.not-yet-btn').forEach(btn => {
     }
   });
 });
-
 renderBlockers('general');
 updateProgress();
-
-// פונקציית זיהוי תפקיד גמישה מבוססת מילות מפתח
 function getRoleKey(roleStr) {
   if (!roleStr) return 'general';
   const s = String(roleStr).toLowerCase();
@@ -536,20 +471,16 @@ function getRoleKey(roleStr) {
   if (s.includes('dev') || s.includes('engineer') || s.includes('software') || s.includes('frontend') || s.includes('backend') || s.includes('sw')) return 'dev';
   return 'general';
 }
-
 function applyPersonData(d) {
   const loading = document.getElementById('person-loading');
   if (loading) loading.remove();
-
   const name = d.name || '';
   const role = d.role || '';
   const firstName = name ? name.split(' ')[0] : '';
-
   const greeting = document.getElementById('personal-greeting');
   if (greeting && firstName) {
     greeting.textContent = `Hey ${firstName} — your experience is exactly what this is about.`;
   }
-
   const card = document.getElementById('person-card');
   if (card) {
     if (document.getElementById('person-name')) document.getElementById('person-name').textContent = name;
@@ -557,7 +488,6 @@ function applyPersonData(d) {
     if (document.getElementById('person-tenure')) document.getElementById('person-tenure').textContent = d.displayTenure || '';
     card.style.display = 'block';
   }
-
   const roleKey = getRoleKey(role);
   if (roleKey) {
     selectedRole = roleKey;
@@ -567,39 +497,27 @@ function applyPersonData(d) {
     if (b01) b01.textContent = B01[roleKey] || B01.general;
   }
 }
-if (json.ok && json.data) {
-  applyPersonData(json.data);
-  await new Promise(r => setTimeout(r, 50)); // תן ל-DOM לsettleף
-  if (json.data.existingAnswers) {
-    populateJoinerAnswers(json.data.existingAnswers);
-  }
-}
 function populateJoinerAnswers(answers) {
   if (!answers) return;
-
   ['ramp_1', 'ramp_2', 'ramp_3'].forEach((key, i) => {
     const rData = answers[key];
     if (rData) {
       const q = document.querySelectorAll('#section-b .question')[i];
       if (!q) return;
-      
       const input = q.querySelector('.time-number');
       const notYetBtn = q.querySelector('.not-yet-btn');
       const pickers = q.querySelector('.time-picker');
-
       if (rData.value === 'Not yet') {
         if (notYetBtn) notYetBtn.click();
       } else if (input && rData.value !== undefined) {
         input.value = rData.value;
       }
-
       if (pickers && rData.unit) {
         const btn = pickers.querySelector(`.time-unit-btn[data-unit="${rData.unit}"]`);
         if (btn) btn.click();
       }
     }
   });
-
   if (answers.sessions && typeof answers.sessions === 'object') {
     document.querySelectorAll('.session-card').forEach(card => {
       const name = card.querySelector('.session-name')?.textContent.trim();
@@ -626,7 +544,6 @@ function populateJoinerAnswers(answers) {
       }
     });
   }
-
   if (Array.isArray(answers.blockers)) {
     document.querySelectorAll('#blockers-list .checkbox-item').forEach(item => {
       const label = item.querySelector('.checkbox-label')?.textContent.trim();
@@ -635,7 +552,6 @@ function populateJoinerAnswers(answers) {
       }
     });
   }
-
   if (answers.buddy) {
     document.querySelectorAll('#buddy-selector .choice-btn').forEach(btn => {
       if (btn.textContent.trim() === answers.buddy) btn.click();
@@ -649,7 +565,6 @@ function populateJoinerAnswers(answers) {
     const ta = document.querySelector('#followup-not textarea');
     if (ta) ta.value = answers.buddy_note_not;
   }
-
   ['open_1', 'open_2', 'open_3', 'open_4'].forEach((key, i) => {
     const tas = document.querySelectorAll('#section-e textarea');
     if (tas[i] && answers[key]) {
@@ -657,7 +572,6 @@ function populateJoinerAnswers(answers) {
     }
   });
 }
-
 async function loadServerData() {
   const loadingEl = document.getElementById('person-loading');
   if (!TOKEN) {
@@ -669,6 +583,7 @@ async function loadServerData() {
     const json = await res.json();
     if (json.ok && json.data) {
       applyPersonData(json.data);
+      await new Promise(r => setTimeout(r, 50));
       if (json.data.existingAnswers) {
         populateJoinerAnswers(json.data.existingAnswers);
       }
@@ -680,25 +595,20 @@ async function loadServerData() {
     if (loadingEl) loadingEl.textContent = 'Error loading data.';
   }
 }
-
 loadServerData();
-
 function collectAnswers() {
   const answers = {};
   answers.role = selectedRole ? (ROLE_LABELS[selectedRole] || selectedRole) : '';
-
   document.querySelectorAll('#section-b .question').forEach((q, i) => {
     const notYetSelected = q.querySelector('.not-yet-btn.selected');
     const input = q.querySelector('.time-number');
     const toggle = q.querySelector('.time-unit-btn.active');
     const unit = toggle ? toggle.dataset.unit : 'weeks';
-
     answers['ramp_' + (i+1)] = {
       value: notYetSelected ? 'Not yet' : (input ? input.value : ''),
       unit: unit
     };
   });
-
   const sessions = {};
   document.querySelectorAll('.session-card').forEach(card => {
     const name = card.querySelector('.session-name')?.textContent.trim();
@@ -708,28 +618,22 @@ function collectAnswers() {
     if (name) sessions[name] = { rating, timing, note };
   });
   answers.sessions = sessions;
-
   const blockers = [];
   document.querySelectorAll('#blockers-list .checkbox-item.checked .checkbox-label')
     .forEach(el => blockers.push(el.textContent.trim()));
   answers.blockers = blockers;
-
   const buddyBtn = document.querySelector('#buddy-selector .selected');
   answers.buddy = buddyBtn ? buddyBtn.textContent.trim() : '';
   answers.buddy_note_used = document.querySelector('#followup-used textarea')?.value || '';
   answers.buddy_note_not = document.querySelector('#followup-not textarea')?.value || '';
-
   document.querySelectorAll('#section-e textarea').forEach((ta, i) => {
     answers['open_' + (i+1)] = ta.value;
   });
-
   return answers;
 }
-
 document.querySelector('.btn-submit').addEventListener('click', async function() {
   this.textContent = 'Saving...';
   this.disabled = true;
-
   const payload = {
     token: TOKEN,
     type: 'joiner',
@@ -737,7 +641,6 @@ document.querySelector('.btn-submit').addEventListener('click', async function()
     site: '',
     answers: collectAnswers()
   };
-
   try {
     await fetch(API_URL, {
       method: 'POST',
@@ -745,9 +648,8 @@ document.querySelector('.btn-submit').addEventListener('click', async function()
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
-
     document.querySelector('.survey-wrap').innerHTML = `
-      <div style="text-align:center;padding:80px 24px;max-width:480px;margin:0 me auto;">
+      <div style="text-align:center;padding:80px 24px;max-width:480px;margin:0 auto;">
         <div style="font-size:48px;margin-bottom:24px;">🎉</div>
         <div style="font-family:'Fraunces',serif;font-size:28px;font-weight:300;letter-spacing:-0.02em;margin-bottom:12px;">Thank you.</div>
         <div style="font-size:15px;color:var(--mid);line-height:1.6;">Your answers have been saved.<br><br>
