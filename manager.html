@@ -1,122 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
- <link rel="preconnect" href="https://script.google.com" crossorigin>
-<link rel="preconnect" href="https://script.googleusercontent.com" crossorigin>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Onboarding Survey — Manager</title>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --pink: #FF0083; --pink-light: #fff0f7; --charcoal: #1a1a1a;
-    --mid: #555; --light: #999; --border: #e8e8e8;
-    --bg: #fafafa; --white: #fff; --radius: 12px; --radius-sm: 8px;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--charcoal); min-height: 100vh; }
-
-  .survey-header { background: var(--charcoal); padding: 16px 0; position: sticky; top: 0; z-index: 100; }
-  .header-inner { max-width: 680px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; gap: 20px; }
-  .wordmark { font-family: 'Fraunces', serif; font-size: 17px; font-weight: 400; color: white; letter-spacing: -0.02em; white-space: nowrap; }
-  .wordmark span { color: var(--pink); }
-  .header-badge { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.1em; color: rgba(255,255,255,0.4); border: 1px solid rgba(255,255,255,0.15); padding: 4px 10px; border-radius: 20px; white-space: nowrap; }
-  .progress-area { flex: 1; display: flex; flex-direction: column; gap: 5px; }
-  .progress-meta { display: flex; justify-content: space-between; }
-  .progress-section-name { font-size: 11px; color: rgba(255,255,255,0.6); font-weight: 500; }
-  .progress-counter { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: rgba(255,255,255,0.3); }
-  .progress-bar { height: 3px; background: rgba(255,255,255,0.15); border-radius: 2px; overflow: hidden; }
-  .progress-fill { height: 100%; background: var(--pink); border-radius: 2px; transition: width 0.35s ease; }
-
-  .survey-wrap { max-width: 680px; margin: 0 auto; padding: 0 24px 120px; }
-  .survey-section { padding-top: 52px; }
-  .section-intro { margin-bottom: 28px; }
-  .section-tag { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.12em; color: var(--pink); text-transform: uppercase; margin-bottom: 8px; }
-  .section-title { font-family: 'Fraunces', serif; font-size: 26px; font-weight: 300; line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 8px; }
-  .section-subtitle { font-size: 14px; color: var(--mid); line-height: 1.6; }
-  .section-divider { display: flex; align-items: center; gap: 16px; margin: 52px 0 0; }
-  .divider-line { flex: 1; height: 1px; background: var(--border); }
-  .divider-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.15em; color: var(--light); text-transform: uppercase; white-space: nowrap; }
-
-  .question { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 12px; transition: border-color 0.2s; cursor: pointer; }
-  .question.focused { border-color: var(--pink); box-shadow: 0 0 0 3px rgba(255,0,131,0.06); }
-  .question.key { border-color: var(--pink); background: var(--pink-light); }
-  .q-text { font-size: 15px; font-weight: 500; color: var(--charcoal); line-height: 1.5; margin-bottom: 6px; }
-  .q-hint { font-size: 12px; color: var(--light); margin-bottom: 16px; line-height: 1.5; }
-  .key-badge { display: inline-flex; align-items: center; gap: 5px; background: var(--pink); color: white; font-size: 10px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.06em; text-transform: uppercase; padding: 4px 10px; border-radius: 20px; margin-bottom: 12px; }
-
-  .input-row { display: flex; gap: 8px; flex-wrap: wrap; }
-  .choice-btn { border: 1.5px solid var(--border); background: var(--white); border-radius: var(--radius-sm); padding: 9px 16px; font-size: 13px; font-family: 'Inter', sans-serif; color: var(--charcoal); cursor: pointer; transition: all 0.15s; white-space: nowrap; }
-  .choice-btn:hover { border-color: var(--pink); color: var(--pink); }
-  .choice-btn.selected { border-color: var(--pink); background: var(--pink-light); color: var(--pink); font-weight: 500; }
-
-  .time-picker { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
-  .time-unit-toggle { display: flex; border: 1.5px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
-  .time-unit-btn { padding: 7px 13px; font-size: 12px; font-family: 'Inter', sans-serif; background: var(--white); border: none; cursor: pointer; color: var(--mid); transition: all 0.15s; }
-  .time-unit-btn.active { background: var(--pink); color: white; font-weight: 500; }
-  .time-number { width: 70px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 9px 12px; font-size: 15px; font-family: 'JetBrains Mono', monospace; color: var(--charcoal); text-align: center; outline: none; transition: border-color 0.15s; background: var(--white); }
-  .time-number:focus { border-color: var(--pink); }
-  .time-label { font-size: 13px; color: var(--mid); }
-  .not-yet-wrap { margin-top: 10px; }
-  .not-yet-btn { font-size: 12px; color: var(--light); background: none; border: 1.5px dashed var(--border); border-radius: var(--radius-sm); padding: 7px 13px; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.15s; }
-  .not-yet-btn:hover { border-color: var(--pink); color: var(--pink); }
-
-  .text-input { width: 100%; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 12px 16px; font-size: 14px; font-family: 'Inter', sans-serif; color: var(--charcoal); resize: vertical; min-height: 72px; outline: none; transition: border-color 0.15s; background: var(--white); }
-  .text-input:focus { border-color: var(--pink); }
-
-  .checkbox-list { display: flex; flex-direction: column; gap: 8px; }
-  .checkbox-item { display: flex; align-items: center; gap: 12px; padding: 11px 16px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.15s; background: var(--white); }
-  .checkbox-item:hover { border-color: #ccc; }
-  .checkbox-item.checked { border-color: var(--pink); background: var(--pink-light); }
-  .checkbox-box { width: 18px; height: 18px; border: 2px solid var(--border); border-radius: 4px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
-  .checkbox-item.checked .checkbox-box { border-color: var(--pink); background: var(--pink); }
-  .checkbox-check { color: white; font-size: 11px; display: none; }
-  .checkbox-item.checked .checkbox-check { display: block; }
-  .checkbox-label { font-size: 14px; color: var(--charcoal); }
-
-  .person-cards { display: flex; flex-direction: column; gap: 14px; }
-  .person-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
-  .person-card-header { background: var(--bg); border-bottom: 1px solid var(--border); padding: 14px 20px; display: flex; align-items: center; gap: 12px; }
-  .person-avatar { width: 30px; height: 30px; background: var(--charcoal); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: white; font-family: 'JetBrains Mono', monospace; flex-shrink: 0; }
-  .person-label { font-size: 13px; font-weight: 500; color: var(--charcoal); }
-  .person-card-body { padding: 20px; display: flex; flex-direction: column; gap: 20px; }
-  .person-q-label { font-size: 13px; font-weight: 500; color: var(--charcoal); margin-bottom: 4px; }
-  .person-q-hint { font-size: 12px; color: var(--light); margin-bottom: 10px; line-height: 1.5; }
-  .key-block { background: var(--pink-light); border-left: 3px solid var(--pink); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; padding: 16px; }
-
-  .delete-card-btn { margin-left: auto; background: none; border: none; cursor: pointer; font-size: 18px; color: var(--light); line-height: 1; padding: 0 4px; transition: color 0.15s; }
-  .delete-card-btn:hover { color: #e00; }
-  .add-person-btn { width: 100%; border: 2px dashed var(--border); border-radius: var(--radius); padding: 18px; background: none; cursor: pointer; font-size: 13px; color: var(--light); font-family: 'Inter', sans-serif; transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 12px; }
-  .add-person-btn:hover { border-color: var(--pink); color: var(--pink); }
-
-  .cost-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
-  .cost-item label { font-size: 12px; color: var(--mid); display: block; margin-bottom: 6px; }
-  .cost-select { width: 100%; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; font-size: 13px; font-family: 'Inter', sans-serif; color: var(--charcoal); background: var(--white); outline: none; cursor: pointer; }
-
-  .info-note { background: var(--pink-light); border-left: 3px solid var(--pink); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; padding: 12px 16px; font-size: 13px; color: var(--mid); margin-bottom: 16px; line-height: 1.5; }
-
-  .submit-wrap { margin-top: 40px; display: flex; justify-content: flex-end; }
-  .btn-submit { background: var(--pink); color: white; border: none; border-radius: var(--radius-sm); padding: 14px 32px; font-size: 15px; font-weight: 500; font-family: 'Inter', sans-serif; cursor: pointer; transition: opacity 0.15s; }
-  .btn-submit:hover { opacity: 0.88; }
-  
-  .pulse-loading {
-    text-align: center;
-    padding: 60px 20px;
-    font-size: 1.25rem;
-    font-weight: 500;
-    color: #ff0055;
-    animation: pulse 1.5s infinite ease-in-out;
-  }
-
-  @keyframes pulse {
-    0% { opacity: 0.4; transform: scale(0.98); }
-    50% { opacity: 1; transform: scale(1); }
-    100% { opacity: 0.4; transform: scale(0.98); }
-  }
-</style>
+  <link rel="preconnect" href="https://script.google.com" crossorigin>
+  <link rel="preconnect" href="https://script.googleusercontent.com" crossorigin>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Onboarding Survey — Manager</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --pink: #FF0083; --pink-light: #fff0f7; --charcoal: #1a1a1a;
+      --mid: #555; --light: #999; --border: #e8e8e8;
+      --bg: #fafafa; --white: #fff; --radius: 12px; --radius-sm: 8px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--charcoal); min-height: 100vh; }
+    .survey-header { background: var(--charcoal); padding: 16px 0; position: sticky; top: 0; z-index: 100; }
+    .header-inner { max-width: 680px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; gap: 20px; }
+    .wordmark { font-family: 'Fraunces', serif; font-size: 17px; font-weight: 400; color: white; letter-spacing: -0.02em; white-space: nowrap; }
+    .wordmark span { color: var(--pink); }
+    .header-badge { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.1em; color: rgba(255,255,255,0.4); border: 1px solid rgba(255,255,255,0.15); padding: 4px 10px; border-radius: 20px; white-space: nowrap; }
+    .progress-area { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+    .progress-meta { display: flex; justify-content: space-between; }
+    .progress-section-name { font-size: 11px; color: rgba(255,255,255,0.6); font-weight: 500; }
+    .progress-counter { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: rgba(255,255,255,0.3); }
+    .progress-bar { height: 3px; background: rgba(255,255,255,0.15); border-radius: 2px; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--pink); border-radius: 2px; transition: width 0.35s ease; }
+    .survey-wrap { max-width: 680px; margin: 0 auto; padding: 0 24px 120px; }
+    .survey-section { padding-top: 52px; }
+    .section-intro { margin-bottom: 28px; }
+    .section-tag { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.12em; color: var(--pink); text-transform: uppercase; margin-bottom: 8px; }
+    .section-title { font-family: 'Fraunces', serif; font-size: 26px; font-weight: 300; line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 8px; }
+    .section-subtitle { font-size: 14px; color: var(--mid); line-height: 1.6; }
+    .section-divider { display: flex; align-items: center; gap: 16px; margin: 52px 0 0; }
+    .divider-line { flex: 1; height: 1px; background: var(--border); }
+    .divider-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.15em; color: var(--light); text-transform: uppercase; white-space: nowrap; }
+    .question { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 12px; transition: border-color 0.2s; cursor: pointer; }
+    .question.focused { border-color: var(--pink); box-shadow: 0 0 0 3px rgba(255,0,131,0.06); }
+    .question.key { border-color: var(--pink); background: var(--pink-light); }
+    .q-text { font-size: 15px; font-weight: 500; color: var(--charcoal); line-height: 1.5; margin-bottom: 6px; }
+    .q-hint { font-size: 12px; color: var(--light); margin-bottom: 16px; line-height: 1.5; }
+    .key-badge { display: inline-flex; align-items: center; gap: 5px; background: var(--pink); color: white; font-size: 10px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.06em; text-transform: uppercase; padding: 4px 10px; border-radius: 20px; margin-bottom: 12px; }
+    .input-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .choice-btn { border: 1.5px solid var(--border); background: var(--white); border-radius: var(--radius-sm); padding: 9px 16px; font-size: 13px; font-family: 'Inter', sans-serif; color: var(--charcoal); cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+    .choice-btn:hover { border-color: var(--pink); color: var(--pink); }
+    .choice-btn.selected { border-color: var(--pink); background: var(--pink-light); color: var(--pink); font-weight: 500; }
+    .time-picker { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+    .time-unit-toggle { display: flex; border: 1.5px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
+    .time-unit-btn { padding: 7px 13px; font-size: 12px; font-family: 'Inter', sans-serif; background: var(--white); border: none; cursor: pointer; color: var(--mid); transition: all 0.15s; }
+    .time-unit-btn.active { background: var(--pink); color: white; font-weight: 500; }
+    .time-number { width: 70px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 9px 12px; font-size: 15px; font-family: 'JetBrains Mono', monospace; color: var(--charcoal); text-align: center; outline: none; transition: border-color 0.15s; background: var(--white); }
+    .time-number:focus { border-color: var(--pink); }
+    .time-label { font-size: 13px; color: var(--mid); }
+    .not-yet-wrap { margin-top: 10px; }
+    .not-yet-btn { font-size: 12px; color: var(--light); background: none; border: 1.5px dashed var(--border); border-radius: var(--radius-sm); padding: 7px 13px; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.15s; }
+    .not-yet-btn:hover { border-color: var(--pink); color: var(--pink); }
+    .text-input { width: 100%; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 12px 16px; font-size: 14px; font-family: 'Inter', sans-serif; color: var(--charcoal); resize: vertical; min-height: 72px; outline: none; transition: border-color 0.15s; background: var(--white); }
+    .text-input:focus { border-color: var(--pink); }
+    .checkbox-list { display: flex; flex-direction: column; gap: 8px; }
+    .checkbox-item { display: flex; align-items: center; gap: 12px; padding: 11px 16px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.15s; background: var(--white); }
+    .checkbox-item:hover { border-color: #ccc; }
+    .checkbox-item.checked { border-color: var(--pink); background: var(--pink-light); }
+    .checkbox-box { width: 18px; height: 18px; border: 2px solid var(--border); border-radius: 4px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+    .checkbox-item.checked .checkbox-box { border-color: var(--pink); background: var(--pink); }
+    .checkbox-check { color: white; font-size: 11px; display: none; }
+    .checkbox-item.checked .checkbox-check { display: block; }
+    .checkbox-label { font-size: 14px; color: var(--charcoal); }
+    .person-cards { display: flex; flex-direction: column; gap: 14px; }
+    .person-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .person-card-header { background: var(--bg); border-bottom: 1px solid var(--border); padding: 14px 20px; display: flex; align-items: center; gap: 12px; }
+    .person-avatar { width: 30px; height: 30px; background: var(--charcoal); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: white; font-family: 'JetBrains Mono', monospace; flex-shrink: 0; }
+    .person-label { font-size: 13px; font-weight: 500; color: var(--charcoal); }
+    .person-card-body { padding: 20px; display: flex; flex-direction: column; gap: 20px; }
+    .person-q-label { font-size: 13px; font-weight: 500; color: var(--charcoal); margin-bottom: 4px; }
+    .person-q-hint { font-size: 12px; color: var(--light); margin-bottom: 10px; line-height: 1.5; }
+    .key-block { background: var(--pink-light); border-left: 3px solid var(--pink); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; padding: 16px; }
+    .delete-card-btn { margin-left: auto; background: none; border: none; cursor: pointer; font-size: 18px; color: var(--light); line-height: 1; padding: 0 4px; transition: color 0.15s; }
+    .delete-card-btn:hover { color: #e00; }
+    .add-person-btn { width: 100%; border: 2px dashed var(--border); border-radius: var(--radius); padding: 18px; background: none; cursor: pointer; font-size: 13px; color: var(--light); font-family: 'Inter', sans-serif; transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 12px; }
+    .add-person-btn:hover { border-color: var(--pink); color: var(--pink); }
+    .cost-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+    .cost-item label { font-size: 12px; color: var(--mid); display: block; margin-bottom: 6px; }
+    .cost-select { width: 100%; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; font-size: 13px; font-family: 'Inter', sans-serif; color: var(--charcoal); background: var(--white); outline: none; cursor: pointer; }
+    .info-note { background: var(--pink-light); border-left: 3px solid var(--pink); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; padding: 12px 16px; font-size: 13px; color: var(--mid); margin-bottom: 16px; line-height: 1.5; }
+    .submit-wrap { margin-top: 40px; display: flex; justify-content: flex-end; }
+    .btn-submit { background: var(--pink); color: white; border: none; border-radius: var(--radius-sm); padding: 14px 32px; font-size: 15px; font-weight: 500; font-family: 'Inter', sans-serif; cursor: pointer; transition: opacity 0.15s; }
+    .btn-submit:hover { opacity: 0.88; }
+    .pulse-loading { text-align: center; padding: 60px 20px; font-size: 1.25rem; font-weight: 500; color: #ff0055; animation: pulse 1.5s infinite ease-in-out; }
+    @keyframes pulse { 0% { opacity: 0.4; transform: scale(0.98); } 50% { opacity: 1; transform: scale(1); } 100% { opacity: 0.4; transform: scale(0.98); } }
+  </style>
 </head>
 <body>
-
 <header class="survey-header">
   <div class="header-inner">
     <div class="wordmark">L&D <span>×</span> Onboarding</div>
@@ -130,19 +104,13 @@
     <div class="header-badge">Manager</div>
   </div>
 </header>
-
 <div class="survey-wrap">
-
-  <!-- INTRO -->
   <div style="padding-top:40px;">
     <div style="background:var(--charcoal);border-radius:var(--radius);padding:32px;color:white;">
-      
       <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:var(--pink);text-transform:uppercase;margin-bottom:14px;">Liran Shaked · L&amp;D Lead Tech Dev</div>
       <div id="personal-greeting" style="font-family:'Fraunces',serif;font-size:22px;font-weight:300;line-height:1.3;letter-spacing:-0.02em;margin-bottom:16px;">I joined Lemonade a few months ago to lead L&D — and onboarding is the first thing I'm working on.</div>
       <div id="manager-card" style="display:block;background:rgba(255,255,255,0.08);border-radius:8px;padding:14px 18px;margin-bottom:16px;font-size:13px;color:rgba(255,255,255,0.9);line-height:1.8;">
-        <div id="manager-loading" class="pulse-loading">
-          Fetching your team's data... ⏳
-        </div>
+        <div id="manager-loading" class="pulse-loading">Fetching your team's data... ⏳</div>
         <div id="manager-name" style="font-weight:600;font-size:15px;margin-bottom:2px;"></div>
         <div id="manager-role" style="color:rgba(255,255,255,0.5);font-size:12px;margin-bottom:10px;"></div>
         <div id="manager-reports" style="color:rgba(255,255,255,0.75);font-size:12px;line-height:1.9;border-top:1px solid rgba(255,255,255,0.1);padding-top:10px;"></div>
@@ -150,34 +118,24 @@
       <div style="font-size:13px;color:rgba(255,255,255,0.6);line-height:1.7;">I've started collecting feedback through conversations across R&D and Product — and before updating or changing anything in onboarding, I'd love to hear directly from you.<br><br>About <strong style="color:white;">5 minutes</strong>. <strong style="color:white;">No individual answers are shared</strong> — results go back to everyone as aggregate findings.</div>
     </div>
   </div>
-
   <div class="section-divider"><div class="divider-line"></div><div class="divider-label">Section B</div><div class="divider-line"></div></div>
-
-  <!-- B: PER HIRE -->
   <div class="survey-section" id="section-b" data-name="Per hire">
     <div class="section-intro">
       <div class="section-tag">Section B · Per hire</div>
       <div class="section-title">For each person you onboarded</div>
       <div class="section-subtitle">One card per hire from the last 6 months. "Not yet" is a valid answer — it means the ramp isn't finished.</div>
     </div>
-
     <div class="info-note">This is ramp data that's never been collected before. Your estimates don't need to be precise — just honest.</div>
-
     <div class="person-cards" id="person-cards"></div>
-
     <button class="add-person-btn" id="add-person-btn">+ Add another hire</button>
   </div>
-
   <div class="section-divider"><div class="divider-line"></div><div class="divider-label">Section C</div><div class="divider-line"></div></div>
-
-  <!-- C: COST & GAPS -->
   <div class="survey-section" id="section-c" data-name="Cost & gaps">
     <div class="section-intro">
       <div class="section-tag">Section C · Cost & gaps</div>
       <div class="section-title">What it actually cost you</div>
       <div class="section-subtitle">How much of your own time went into onboarding — and across the full ramp, not just week one.</div>
     </div>
-
     <div class="question">
       <div class="q-text">How many of your own hours went into onboarding the last person you hired?</div>
       <div class="q-hint">Rough estimates are fine.</div>
@@ -188,17 +146,13 @@
       </div>
     </div>
   </div>
-
   <div class="section-divider"><div class="divider-line"></div><div class="divider-label">Section D</div><div class="divider-line"></div></div>
-
-  <!-- D: GAPS -->
   <div class="survey-section" id="section-d" data-name="Gaps">
     <div class="section-intro">
       <div class="section-tag">Section D · Gaps</div>
       <div class="section-title">What you built yourself</div>
       <div class="section-subtitle">These questions write the roadmap.</div>
     </div>
-
     <div class="question">
       <div class="q-text">How would you describe their onboarding status after 3 months?</div>
       <div class="q-hint">Pick the closest fit for the last person you onboarded.</div>
@@ -209,7 +163,6 @@
         <button class="choice-btn">Still needs significant support</button>
       </div>
     </div>
-
     <div class="question">
       <div class="q-text">Where did most of their learning come from?</div>
       <div class="q-hint">Rough estimate — adds up to 100%.</div>
@@ -219,7 +172,6 @@
         <div><label style="font-size:12px;color:var(--mid);display:block;margin-bottom:6px;">From you (manager)</label><div style="display:flex;align-items:center;gap:8px;"><input type="number" class="time-number" placeholder="25" min="0" max="100" style="width:64px;"><span style="font-size:13px;color:var(--mid);">%</span></div></div>
       </div>
     </div>
-
     <div class="question key">
       <div class="key-badge">★ Most important</div>
       <div class="q-text">What did you put together yourself every time someone new joined?</div>
@@ -234,14 +186,12 @@
       </div>
       <div style="margin-top:12px;"><textarea class="text-input" style="min-height:60px;" placeholder="Anything not on the list..."></textarea></div>
     </div>
-
     <div class="question key">
       <div class="key-badge">★ Most important</div>
       <div class="q-text">What keeps landing on you every time someone joins — that shouldn't?</div>
       <div class="q-hint">The things you'd hand off immediately if there was someone to take them.</div>
       <textarea class="text-input" placeholder="e.g. Explaining the architecture from scratch, tracking first-month progress, connecting them to the right people..."></textarea>
     </div>
-
     <div class="question">
       <div class="q-text">Before their first day — did you have a plan?</div>
       <div class="q-hint">How prepared did you feel going in, and what would have helped you prepare better?</div>
@@ -252,37 +202,29 @@
       </div>
       <textarea class="text-input" style="min-height:60px;" placeholder="What would have helped you prepare better?"></textarea>
     </div>
-
     <div class="question">
       <div class="q-text">What worked well that we should keep?</div>
       <textarea class="text-input" placeholder="A session, a resource, something that made your job easier as a manager..."></textarea>
     </div>
-
     <div class="question">
       <div class="q-text">Anything else we should know?</div>
       <textarea class="text-input" placeholder="Anything that didn't fit the questions above..."></textarea>
     </div>
-
     <div class="submit-wrap">
       <button class="btn-submit">Submit →</button>
     </div>
   </div>
-
 </div>
-
 <script>
 const API_URL = 'https://script.google.com/macros/s/AKfycbzz5dtr5YQim7X1fA29Uml5zjmDFFp1WQ1M9zyn-jSvH14u1VK3vyxK43hv3VCiXqQ/exec';
 const urlParams = new URLSearchParams(window.location.search);
 const TOKEN = window.location.hash.replace('#', '') || urlParams.get('token') || urlParams.get('id');
-
 const SECTIONS = [
   { id:'section-b', name:'Per hire' },
   { id:'section-c', name:'Cost & gaps' },
   { id:'section-d', name:'Gaps' },
 ];
-
 let hireCount = 0;
-
 function updateProgress() {
   const scrollY = window.scrollY;
   const docH = document.documentElement.scrollHeight - window.innerHeight;
@@ -295,7 +237,6 @@ function updateProgress() {
   document.getElementById('progressCounter').textContent = 'Section ' + (idx+1) + ' / ' + SECTIONS.length;
 }
 window.addEventListener('scroll', updateProgress, { passive: true });
-
 function initTimePickers(root) {
   (root || document).querySelectorAll('.time-unit-toggle').forEach(toggle => {
     toggle.querySelectorAll('.time-unit-btn').forEach(btn => {
@@ -307,7 +248,6 @@ function initTimePickers(root) {
     });
   });
 }
-
 function initChoiceRows(root) {
   (root || document).querySelectorAll('.input-row').forEach(row => {
     row.querySelectorAll('.choice-btn').forEach(btn => {
@@ -315,7 +255,6 @@ function initChoiceRows(root) {
     });
   });
 }
-
 function renumberCards() {
   const colors = ['#1a1a1a','#444','#666','#888','#aaa'];
   document.querySelectorAll('#person-cards .person-card').forEach((card, i) => {
@@ -327,7 +266,6 @@ function renumberCards() {
     if (del) del.style.display = document.querySelectorAll('#person-cards .person-card').length > 1 ? '' : 'none';
   });
 }
-
 function buildPersonCard(n, realName) {
   const card = document.createElement('div');
   card.className = 'person-card';
@@ -344,11 +282,11 @@ function buildPersonCard(n, realName) {
       <div>
         <div class="person-q-label">When did they join?</div>
         <div class="input-row">
-     <button class="choice-btn">Jan–Feb 2026</button>
-<button class="choice-btn">Mar–Apr 2026</button>
-<button class="choice-btn">May–Jun 2026</button>
-<button class="choice-btn">Jul–Aug 2026</button>
-<button class="choice-btn">Sep–Oct 2026</button>
+          <button class="choice-btn">Jan–Feb 2026</button>
+          <button class="choice-btn">Mar–Apr 2026</button>
+          <button class="choice-btn">May–Jun 2026</button>
+          <button class="choice-btn">Jul–Aug 2026</button>
+          <button class="choice-btn">Sep–Oct 2026</button>
         </div>
       </div>
       <div>
@@ -374,15 +312,12 @@ function buildPersonCard(n, realName) {
     </div>`;
   initTimePickers(card);
   initChoiceRows(card);
-
-  // Click handler for Not Yet buttons in Manager Survey cards
   card.querySelectorAll('.not-yet-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
       const parentBlock = btn.closest('div');
       const input = parentBlock.querySelector('.time-number');
       const isSelected = btn.classList.toggle('selected');
-
       if (isSelected) {
         btn.style.borderColor = 'var(--pink)';
         btn.style.background = 'var(--pink-light)';
@@ -398,7 +333,6 @@ function buildPersonCard(n, realName) {
       }
     });
   });
-
   card.querySelector('.delete-card-btn').addEventListener('click', () => {
     card.remove();
     hireCount = document.querySelectorAll('#person-cards .person-card').length;
@@ -406,72 +340,53 @@ function buildPersonCard(n, realName) {
   });
   return card;
 }
-
 document.getElementById('add-person-btn').addEventListener('click', () => {
   hireCount++;
   const card = buildPersonCard(hireCount);
   document.getElementById('person-cards').appendChild(card);
   renumberCards();
 });
-
 document.querySelectorAll('.checkbox-item').forEach(item => {
   item.addEventListener('click', () => item.classList.toggle('checked'));
 });
-
 document.querySelectorAll('.question').forEach(q => {
   q.addEventListener('click', () => { document.querySelectorAll('.question').forEach(qq => qq.classList.remove('focused')); q.classList.add('focused'); });
 });
-
 initTimePickers();
 initChoiceRows();
 updateProgress();
-
 function applyManagerData(d, reportsData) {
   const loading = document.getElementById('manager-loading');
   if (loading) loading.style.display = 'none';
-
   const name = d.name || '';
   const role = d.role || '';
   const firstName = name ? name.split(' ')[0] : '';
-
   const greeting = document.getElementById('personal-greeting');
   if (greeting && firstName) {
     greeting.textContent = `Hey ${firstName} — your take on onboarding is exactly what I need.`;
   }
-
   const card = document.getElementById('manager-card');
   if (card) {
     if (document.getElementById('manager-name')) document.getElementById('manager-name').textContent = name;
-    
     let managerMeta = role + (d.site ? ' · ' + d.site : '');
-    if (d.displayTenure) {
-      managerMeta += ' · ' + d.displayTenure;
-    }
+    if (d.displayTenure) managerMeta += ' · ' + d.displayTenure;
     if (document.getElementById('manager-role')) document.getElementById('manager-role').textContent = managerMeta;
-    
     card.style.display = 'block';
   }
-
   const containerEl = document.getElementById('person-cards');
   containerEl.innerHTML = '';
-
   if (reportsData && Object.keys(reportsData).length > 0) {
     const reportTokens = Object.keys(reportsData);
     hireCount = reportTokens.length;
-
     reportTokens.forEach((t, i) => {
       const rData = reportsData[t];
       const rName = rData.name || ('Hire #' + (i + 1));
-
       const hireCard = buildPersonCard(i + 1, rName);
       containerEl.appendChild(hireCard);
-
       const hint = hireCard.querySelector('.hire-tenure-hint');
       if (hint && rData.hintText) hint.textContent = rData.hintText;
     });
-
     renumberCards();
-
     const addBtn = document.getElementById('add-person-btn');
     if (addBtn) addBtn.textContent = '+ Add another hire not listed';
   } else {
@@ -480,16 +395,8 @@ function applyManagerData(d, reportsData) {
     renumberCards();
   }
 }
-if (json.ok && json.data) {
-  applyPersonData(json.data);
-  await new Promise(r => setTimeout(r, 50)); // תן ל-DOM לsettleף
-  if (json.data.existingAnswers) {
-    populateJoinerAnswers(json.data.existingAnswers);
-  }
-}
 function populateManagerAnswers(answers) {
   if (!answers) return;
-
   if (Array.isArray(answers.hires)) {
     const cards = document.querySelectorAll('#person-cards .person-card');
     answers.hires.forEach((hData, i) => {
@@ -501,37 +408,31 @@ function populateManagerAnswers(answers) {
           });
         }
         const blocks = card.querySelectorAll('.person-card-body > div');
-
         if (hData.weeks_independent) {
           const indBlock = blocks[1];
           const notYetBtn = indBlock?.querySelector('.not-yet-btn');
           const numInput = indBlock?.querySelector('.time-number');
           const picker = indBlock?.querySelector('.time-picker');
-
           if (hData.weeks_independent.value === 'Not yet') {
             if (notYetBtn) notYetBtn.click();
           } else if (numInput && hData.weeks_independent.value !== undefined) {
             numInput.value = hData.weeks_independent.value;
           }
-
           if (picker && hData.weeks_independent.unit) {
             const btn = picker.querySelector(`.time-unit-btn[data-unit="${hData.weeks_independent.unit}"]`);
             if (btn) btn.click();
           }
         }
-
         if (hData.weeks_review_peer) {
           const revBlock = blocks[2];
           const notYetBtn = revBlock?.querySelector('.not-yet-btn');
           const numInput = revBlock?.querySelector('.time-number');
           const picker = revBlock?.querySelector('.time-picker');
-
           if (hData.weeks_review_peer.value === 'Not yet') {
             if (notYetBtn) notYetBtn.click();
           } else if (numInput && hData.weeks_review_peer.value !== undefined) {
             numInput.value = hData.weeks_review_peer.value;
           }
-
           if (picker && hData.weeks_review_peer.unit) {
             const btn = picker.querySelector(`.time-unit-btn[data-unit="${hData.weeks_review_peer.unit}"]`);
             if (btn) btn.click();
@@ -540,11 +441,9 @@ function populateManagerAnswers(answers) {
       }
     });
   }
-
   document.querySelectorAll('.cost-select').forEach((sel, i) => {
     if (answers['cost_' + i]) sel.value = answers['cost_' + i];
   });
-
   if (Array.isArray(answers.built_yourself)) {
     document.querySelectorAll('.checkbox-item').forEach(item => {
       const label = item.querySelector('.checkbox-label')?.textContent.trim();
@@ -553,14 +452,12 @@ function populateManagerAnswers(answers) {
       }
     });
   }
-
   document.querySelectorAll('textarea').forEach((ta, i) => {
     if (answers['open_' + (i+1)]) {
       ta.value = answers['open_' + (i+1)];
     }
   });
 }
-
 async function loadServerData() {
   const loadingEl = document.getElementById('manager-loading');
   if (!TOKEN) {
@@ -572,6 +469,7 @@ async function loadServerData() {
     const json = await res.json();
     if (json.ok && json.data) {
       applyManagerData(json.data, json.reports);
+      await new Promise(r => setTimeout(r, 50));
       if (json.data.existingAnswers) {
         populateManagerAnswers(json.data.existingAnswers);
       }
@@ -583,26 +481,21 @@ async function loadServerData() {
     if (loadingEl) loadingEl.textContent = 'Error loading data.';
   }
 }
-
 loadServerData();
-
 function collectAnswers() {
   const answers = {};
   const hires = [];
   document.querySelectorAll('.person-card').forEach((card, i) => {
     const joinBtn = card.querySelector('.input-row .selected');
     const blocks = card.querySelectorAll('.person-card-body > div');
-
     const indBlock = blocks[1];
     const indNotYet = indBlock?.querySelector('.not-yet-btn.selected');
     const indNum = indBlock?.querySelector('.time-number');
     const indUnit = indBlock?.querySelector('.time-unit-btn.active');
-
     const revBlock = blocks[2];
     const revNotYet = revBlock?.querySelector('.not-yet-btn.selected');
     const revNum = revBlock?.querySelector('.time-number');
     const revUnit = revBlock?.querySelector('.time-unit-btn.active');
-
     hires.push({
       hire_num: i + 1,
       joined: joinBtn ? joinBtn.textContent.trim() : '',
@@ -624,7 +517,6 @@ function collectAnswers() {
   document.querySelectorAll('textarea').forEach((ta, i) => { answers['open_' + (i+1)] = ta.value; });
   return answers;
 }
-
 document.querySelector('.btn-submit').addEventListener('click', async function() {
   this.textContent = 'Saving...';
   this.disabled = true;
