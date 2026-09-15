@@ -631,7 +631,7 @@ function collectAnswers() {
   });
   return answers;
 }
-document.querySelector('.btn-submit').addEventListener('click', async function() {
+document.querySelector('.btn-submit').addEventListener('click', function() {
   this.textContent = 'Saving...';
   this.disabled = true;
   const payload = {
@@ -641,13 +641,13 @@ document.querySelector('.btn-submit').addEventListener('click', async function()
     site: '',
     answers: collectAnswers()
   };
-  try {
-    await fetch(API_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
+  fetch(API_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  setTimeout(() => {
     document.querySelector('.survey-wrap').innerHTML = `
       <div style="text-align:center;padding:80px 24px;max-width:480px;margin:0 auto;">
         <div style="font-size:48px;margin-bottom:24px;">🎉</div>
@@ -655,11 +655,7 @@ document.querySelector('.btn-submit').addEventListener('click', async function()
         <div style="font-size:15px;color:var(--mid);line-height:1.6;">Your answers have been saved.<br><br>
         <span style="color:var(--pink);font-weight:500;">You can come back to this link anytime</span> to update your answers before the survey closes.</div>
       </div>`;
-  } catch(err) {
-    this.textContent = 'Submit →';
-    this.disabled = false;
-    alert('Something went wrong. Please try again.');
-  }
+  }, 2000);
 });
 </script>
 </body>
