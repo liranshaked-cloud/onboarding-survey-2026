@@ -514,6 +514,25 @@ function collectAnswers() {
   const built = [];
   document.querySelectorAll('.checkbox-item.checked .checkbox-label').forEach(el => built.push(el.textContent.trim()));
   answers.built_yourself = built;
+
+  // Status after 3 months — first .question in section-d with .input-row
+  const sectionDQuestions = Array.from(document.querySelectorAll('#section-d .question'));
+  const statusQ = sectionDQuestions.find(q => q.querySelector('.q-text') && q.querySelector('.q-text').textContent.includes('onboarding status after 3 months'));
+  const statusBtn = statusQ ? statusQ.querySelector('.choice-btn.selected') : null;
+  answers.ramp_status = statusBtn ? statusBtn.textContent.trim() : '';
+
+  // Learning % breakdown
+  const learningQ = sectionDQuestions.find(q => q.querySelector('.q-text') && q.querySelector('.q-text').textContent.includes('most of their learning come from'));
+  const pctInputs = learningQ ? learningQ.querySelectorAll('input[type="number"]') : [];
+  answers.learning_self = pctInputs[0] ? pctInputs[0].value : '';
+  answers.learning_peers = pctInputs[1] ? pctInputs[1].value : '';
+  answers.learning_manager = pctInputs[2] ? pctInputs[2].value : '';
+
+  // Before first day — had a plan?
+  const planQ = sectionDQuestions.find(q => q.querySelector('.q-text') && q.querySelector('.q-text').textContent.includes('Before their first day'));
+  const planBtn = planQ ? planQ.querySelector('.choice-btn.selected') : null;
+  answers.had_plan = planBtn ? planBtn.textContent.trim() : '';
+
   document.querySelectorAll('textarea').forEach((ta, i) => { answers['open_' + (i+1)] = ta.value; });
   return answers;
 }
