@@ -355,7 +355,7 @@ document.querySelectorAll('.question').forEach(q => {
 initTimePickers();
 initChoiceRows();
 updateProgress();
-function applyManagerData(d, reportsData) {
+function applyManagerData(d, reportsData, existingAnswers) {
   const loading = document.getElementById('manager-loading');
   if (loading) loading.style.display = 'none';
   const name = d.name || '';
@@ -393,6 +393,10 @@ function applyManagerData(d, reportsData) {
     hireCount = 1;
     containerEl.appendChild(buildPersonCard(1));
     renumberCards();
+  }
+
+  if (existingAnswers) {
+    populateManagerAnswers(existingAnswers);
   }
 }
 function populateManagerAnswers(answers) {
@@ -468,11 +472,7 @@ async function loadServerData() {
     const res = await fetch(`${API_URL}?token=${TOKEN}&type=manager&_=${Date.now()}`);
     const json = await res.json();
     if (json.ok && json.data) {
-      applyManagerData(json.data, json.reports);
-      await new Promise(r => setTimeout(r, 50));
-      if (json.data.existingAnswers) {
-        populateManagerAnswers(json.data.existingAnswers);
-      }
+      applyManagerData(json.data, json.reports, json.data.existingAnswers);
     } else {
       if (loadingEl) loadingEl.textContent = 'Error: ' + (json.error || 'Manager not found.');
     }
